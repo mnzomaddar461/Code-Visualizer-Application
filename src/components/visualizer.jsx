@@ -31,7 +31,7 @@ import { getGraphDFSAnimations } from "../algorithm/treeandgraph/graphDFS";
 /* ════════════════════════════════════════════════════════════
   🔑 GEMINI API KEY — replace with your key
 ════════════════════════════════════════════════════════════ */
-const GROQ_API_KEY = "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";
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
 /* ════════════════════════════════════════════════════════════
   COMPLEXITY + DESCRIPTIONS
