@@ -29,4 +29,4 @@ Framework: React.js (Vite)
 Styling: Tailwind CSS
 Intelligence: Groq Cloud API
 Icons: Lucide React
-Animations: CSS3 Keyframes & Framer Motion
+Animations: CSS3 Keyframes & Framer Motion.
