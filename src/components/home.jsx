@@ -20,6 +20,12 @@ const iconStyles = {
     border: "border-green-500/20",
     hover: "hover:border-green-500/50",
     text: "text-green-400"
+  },
+    red: {
+    bg: "bg-red-500/10",
+    border: "border-red-500/20",
+    hover: "hover:border-red-500/50",
+    text: "text-red-400"
   }
 };
 
@@ -114,14 +120,26 @@ const Home = () => {
             desc="Witness how Stacks, Queues, and Linked Lists organize and manipulate data in real-time."
             color="purple"
           />
-          <div className="md:col-span-2">
+          <HomeCard 
+            icon={<Binary size={32} />}
+            title="Searching Algorithm"
+            desc="Master the logic of efficient data retrieval. Watch how Linear Search and Binary Search navigate through datasets to find targets with precision."
+            color="red"
+          />
             <HomeCard 
               icon={<GitGraphIcon size={32} />}
               title="Graph and Tree"
               desc="Master complex traversals like BFS and DFS by visualizing dynamic nodes and edge connections in real-time."
               color="green"
             />
-          </div>
+          {/* <div className="md:col-span-2">
+            <HomeCard 
+              icon={<GitGraphIcon size={32} />}
+              title="Graph and Tree"
+              desc="Master complex traversals like BFS and DFS by visualizing dynamic nodes and edge connections in real-time."
+              color="green"
+            />
+          </div> */}
         </div>
       </div>
     </div>
