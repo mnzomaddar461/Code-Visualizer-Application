@@ -72,7 +72,7 @@ const Header = ({
               }}
               className="appearance-none bg-slate-900/80 border border-amber-700/40 px-4 py-2.5 pr-9 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-300 hover:border-amber-500/60 transition-all focus:border-amber-500/70 min-w-[148px]"
             >
-              <option value="" disabled hidden>🔍 Searching</option>
+              <option value="" disabled hidden>Searching</option>
               <option value="Linear Search">Linear Search</option>
               <option value="Binary Search">Binary Search</option>
               <option value="Jump Search">Jump Search</option>

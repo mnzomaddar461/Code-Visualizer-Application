@@ -1,5 +1,5 @@
 import React from 'react';
-import { Zap, BarChart3, Binary, GitGraph, TreePalm, GitGraphIcon, Trees, AlertOctagonIcon, LeafyGreen } from 'lucide-react';
+import { Zap, BarChart3, Binary, GitGraph, TreePalm, GitGraphIcon, Trees, AlertOctagonIcon, LeafyGreen, SearchAlertIcon, SearchCode } from 'lucide-react';
 
 // সর্টিং এবং পাথফাইন্ডিং আইকনগুলোর জন্য কালার কনফিগ
 const iconStyles = {
@@ -121,7 +121,7 @@ const Home = () => {
             color="purple"
           />
           <HomeCard 
-            icon={<Binary size={32} />}
+            icon={<SearchCode size={32} />}
             title="Searching Algorithm"
             desc="Master the logic of efficient data retrieval. Watch how Linear Search and Binary Search navigate through datasets to find targets with precision."
             color="red"

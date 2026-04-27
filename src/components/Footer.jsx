@@ -81,9 +81,14 @@ const Footer = () => {
                     Data Structure
                   </a>
                 </li>
-                                <li>
+                <li>
                   <a href="#" className="hover:text-blue-500 transition-colors">
                     Tree & Graph
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-blue-500 transition-colors">
+                    Searching
                   </a>
                 </li>
               </ul>
