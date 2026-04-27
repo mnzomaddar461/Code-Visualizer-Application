@@ -1,11 +1,11 @@
 import React from 'react';
-import { Zap, Code2, ChevronDown, Bot, Search } from 'lucide-react';
+import { Zap, Code2, ChevronDown, Bot } from 'lucide-react';
 
 const Header = ({
   selectedAlgo,        setSelectedAlgo,
   selectedPathAlgo,    setSelectedPathAlgo,
   selectedGraphAlgo,   setSelectedGraphAlgo,
-  selectedSearchAlgo,  setSelectedSearchAlgo,  // ← নতুন
+  selectedSearchAlgo,  setSelectedSearchAlgo,
   showCode,            setShowCode,
   showChat,            setShowChat,
 }) => {

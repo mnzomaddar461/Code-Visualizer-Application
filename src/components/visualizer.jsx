@@ -5,8 +5,8 @@ import Footer from './Footer';
 import {
   Play, RotateCcw, Plus, Trash2, RefreshCw,
   Code2, Pin, ArrowRightLeft, SquareCheck, GitCompare,
-  BookOpen, ChevronRight, Layers,
-  Bot, Send, X, Sparkles, MessageCircle
+  BookOpen, Layers,
+  Bot, Send, X, Sparkles,
 } from 'lucide-react';
 
 /* ── Sorting ── */
@@ -15,6 +15,13 @@ import { getQuickSortAnimations }     from "../algorithm/sorting/quickSort";
 import { getSelectionSortAnimations } from "../algorithm/sorting/selectionSort";
 import { getInsertionSortAnimations } from "../algorithm/sorting/insertionSort";
 import { getMergeSortAnimations }     from "../algorithm/sorting/mergeSort";
+
+/* ── Searching ── */
+import { getLinearSearchAnimations }        from "../algorithm/searching/linearSearch";
+import { getBinarySearchAnimations }        from "../algorithm/searching/binarySearch";
+import { getJumpSearchAnimations }          from "../algorithm/searching/jumSearch";
+import { getFibonacciSearchAnimations }     from "../algorithm/searching/fibonacciSearch";
+import { getInterpolationSearchAnimations } from "../algorithm/searching/interpolationSearch";
 
 /* ── Data Structures ── */
 import { stackAction }            from "../algorithm/dataStructures/stack";
@@ -28,9 +35,6 @@ import { getTreeDFSAnimations }  from "../algorithm/treeandgraph/treeDFS";
 import { getGraphBFSAnimations } from "../algorithm/treeandgraph/graphBFS";
 import { getGraphDFSAnimations } from "../algorithm/treeandgraph/graphDFS";
 
-/* ════════════════════════════════════════════════════════════
-  🔑 GEMINI API KEY — replace with your key
-════════════════════════════════════════════════════════════ */
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
 /* ════════════════════════════════════════════════════════════
@@ -67,10 +71,38 @@ const ALGO_INFO = {
     about:"Merge Sort divides the array in half recursively until single elements remain, then merges them back in sorted order. It guarantees O(n log n) time but needs O(n) extra space.",
     stepLabels:{ compare:"Comparing elements from two halves", swap:"Writing merged element into position", pivot:"", sorted:"Sub-array fully merged" },
   },
+  /* ── Searching ── */
+  "Linear Search": {
+    time:"O(n)", space:"O(1)",
+    code:"for(i=0; i<n; i++) {\n  if(arr[i] === target)\n    return i;\n}\nreturn -1;",
+    about:"Linear Search checks each element one by one from left to right until it finds the target or reaches the end. Works on unsorted arrays. Simple but slow for large data.",
+  },
+  "Binary Search": {
+    time:"O(log n)", space:"O(1)",
+    code:"left=0; right=n-1;\nwhile(left<=right) {\n  mid=(left+right)/2;\n  if(arr[mid]==target) return mid;\n  else if(arr[mid]<target) left=mid+1;\n  else right=mid-1;\n}\nreturn -1;",
+    about:"Binary Search works on SORTED arrays. It repeatedly halves the search range by comparing the middle element with the target. Very fast — eliminates half the elements each step.",
+  },
+  "Jump Search": {
+    time:"O(√n)", space:"O(1)",
+    code:"step=√n; prev=0;\nwhile(arr[min(step,n)-1]<target)\n  prev=step; step+=√n;\nfor(i=prev; i<min(step,n); i++)\n  if(arr[i]==target) return i;\nreturn -1;",
+    about:"Jump Search works on SORTED arrays. It jumps ahead by √n steps to find a block where the target might exist, then does a linear search within that block. Faster than Linear, simpler than Binary.",
+  },
+  "Fibonacci Search": {
+    time:"O(log n)", space:"O(1)",
+    code:"Find smallest fibM >= n;\nwhile(fibM>1) {\n  i=min(offset+fibM2,n-1);\n  if(arr[i]<target) offset=i;\n  else if(arr[i]>target) fibM=fibM2;\n  else return i;\n}",
+    about:"Fibonacci Search uses Fibonacci numbers to divide the sorted array. It avoids division (unlike Binary Search) which can be faster on some hardware. Works only on sorted arrays.",
+  },
+  "Interpolation Search": {
+    time:"O(log log n)", space:"O(1)",
+    code:"pos = low + ((high-low)/(arr[high]-arr[low]))*(target-arr[low]);\nif(arr[pos]==target) return pos;\nelse if(arr[pos]<target) low=pos+1;\nelse high=pos-1;",
+    about:"Interpolation Search estimates where the target might be using a mathematical formula — like how we search in a phone book. Works best on uniformly distributed sorted arrays. Can be faster than Binary Search.",
+  },
+  /* ── Data Structures ── */
   "Stack":              { time:"O(1)", space:"O(n)", about:"Stack follows LIFO (Last In, First Out). Think of a stack of plates — you can only add or remove from the top. Operations: Push (add to top), Pop (remove from top)." },
   "Queue":              { time:"O(1)", space:"O(n)", about:"Queue follows FIFO (First In, First Out). Like a line of people — new people join at the rear, and people leave from the front. Operations: Enqueue (add to rear), Dequeue (remove from front)." },
   "Linked List":        { time:"O(n)", space:"O(n)", about:"Linked List stores elements in nodes where each node points to the next. Unlike arrays, nodes are not contiguous in memory. Insertion/deletion is O(1) if you have the reference, but search is O(n)." },
   "Double Linked List": { time:"O(n)", space:"O(n)", about:"Doubly Linked List is like a Linked List but each node has TWO pointers — next (forward) and prev (backward). This allows traversal in both directions and easier deletion." },
+  /* ── Tree & Graph ── */
   "Tree BFS": {
     time:"O(V+E)", space:"O(V)",
     code:"queue = [root]\nwhile queue not empty:\n  node = queue.dequeue()\n  visit(node)\n  for child in node.children:\n    queue.enqueue(child)",
@@ -131,21 +163,16 @@ const DEFAULT_GRAPH_EDGES = [[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]];
 ════════════════════════════════════════════════════════════ */
 const ChatBot = ({ isOpen, onClose, activeAlgo }) => {
   const [messages, setMessages] = useState([
-    {
-      role: "assistant",
-      text: "আমি Visualizer Assistant! Sorting, Data Structures, Tree/Graph সম্পর্কে যেকোনো প্রশ্ন করুন। 🚀",
-    }
+    { role:"assistant", text:"আমি Visualizer Assistant! Sorting, Searching, Data Structures, Tree/Graph সম্পর্কে যেকোনো প্রশ্ন করুন। 🚀" }
   ]);
   const [input, setInput]     = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior:"smooth" }); }, [messages, loading]);
 
   const systemPrompt = `You are an expert algorithm and data structures tutor embedded inside an Algorithm Visualizer web app.
-The app supports: Bubble Sort, Quick Sort, Insertion Sort, Selection Sort, Merge Sort, Stack, Queue, Linked List, Double Linked List, Tree BFS, Tree DFS, Graph BFS, Graph DFS.
+The app supports: Bubble Sort, Quick Sort, Insertion Sort, Selection Sort, Merge Sort, Linear Search, Binary Search, Jump Search, Fibonacci Search, Interpolation Search, Stack, Queue, Linked List, Double Linked List, Tree BFS, Tree DFS, Graph BFS, Graph DFS.
 ${activeAlgo ? `The user is currently viewing: ${activeAlgo}. Focus explanations on this algorithm when relevant.` : ""}
 Answer clearly and concisely. Use simple language. You can use emojis. Keep responses under 200 words unless the user asks for detail.
 If the user writes in Bengali, respond in Bengali. Otherwise respond in English.`;
@@ -153,131 +180,67 @@ If the user writes in Bengali, respond in Bengali. Otherwise respond in English.
   const sendMessage = async () => {
     const text = input.trim();
     if (!text || loading) return;
-
-    const userMsg = { role: "user", text };
+    const userMsg = { role:"user", text };
     setMessages(prev => [...prev, userMsg]);
-    setInput("");
-    setLoading(true);
-
-    // Build conversation history for Gemini
-    const history = [...messages, userMsg].map(m => ({
-      role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: m.text }],
-    }));
-
+    setInput(""); setLoading(true);
     try {
-        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${GROQ_API_KEY}`,
-          },
-          body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
-            messages: [
-              { role: "system", content: systemPrompt },
-              ...messages.map(m => ({ role: m.role === "assistant" ? "assistant" : "user", content: m.text })),
-              { role: "user", content: text },
-            ],
-            max_tokens: 512,
-            temperature: 0.7,
-          }),
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-          const errMsg = data?.error?.message ?? JSON.stringify(data);
-          setMessages(prev => [...prev, { role: "assistant", text: `❌ API Error (${res.status}): ${errMsg}` }]);
-          return;
-        }
-
-        const reply = data?.choices?.[0]?.message?.content;
-        if (!reply) {
-          setMessages(prev => [...prev, { role: "assistant", text: `⚠️ কোনো উত্তর পেলাম না।` }]);
-          return;
-        }
-        setMessages(prev => [...prev, { role: "assistant", text: reply }]);
-            } catch (err) {
-              setMessages(prev => [...prev, { role: "assistant", text: "❌ Network error: " + err.message }]);
-            } finally {
-              setLoading(false);
-            }
-          };
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json", "Authorization":`Bearer ${GROQ_API_KEY}` },
+        body: JSON.stringify({
+          model:"llama-3.3-70b-versatile",
+          messages:[
+            { role:"system", content:systemPrompt },
+            ...messages.map(m => ({ role:m.role==="assistant"?"assistant":"user", content:m.text })),
+            { role:"user", content:text },
+          ],
+          max_tokens:512, temperature:0.7,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setMessages(prev => [...prev, { role:"assistant", text:`❌ API Error (${res.status}): ${data?.error?.message}` }]); return; }
+      const reply = data?.choices?.[0]?.message?.content;
+      setMessages(prev => [...prev, { role:"assistant", text: reply || "⚠️ কোনো উত্তর পেলাম না।" }]);
+    } catch (err) {
+      setMessages(prev => [...prev, { role:"assistant", text:"❌ Network error: " + err.message }]);
+    } finally { setLoading(false); }
+  };
 
   if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed right-6 z-[100] flex flex-col rounded-3xl border border-slate-700/60 shadow-2xl overflow-hidden"
-      style={{ width: "360px", bottom: "88px", maxHeight: "calc(100vh - 110px)", height: "500px", background: "#0b0e17" }}
-    >
-      {/* Header */}
+    <div className="fixed right-6 z-[100] flex flex-col rounded-3xl border border-slate-700/60 shadow-2xl overflow-hidden"
+      style={{ width:"360px", bottom:"88px", maxHeight:"calc(100vh - 110px)", height:"500px", background:"#0b0e17" }}>
       <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-800 bg-[#0f1320]">
-        <div className="p-1.5 bg-emerald-500/15 rounded-xl border border-emerald-500/25">
-          <Sparkles size={16} className="text-emerald-400" />
-        </div>
+        <div className="p-1.5 bg-emerald-500/15 rounded-xl border border-emerald-500/25"><Sparkles size={16} className="text-emerald-400"/></div>
         <div className="flex-1">
           <p className="text-sm font-bold text-white leading-none">Visualizer AI</p>
-          <p className="text-[10px] text-emerald-400 mt-0.5">
-            {activeAlgo ? `Viewing: ${activeAlgo}` : "Ask me anything"}
-          </p>
+          <p className="text-[10px] text-emerald-400 mt-0.5">{activeAlgo ? `Viewing: ${activeAlgo}` : "Ask me anything"}</p>
         </div>
-        <button onClick={onClose} className="text-slate-600 hover:text-white transition p-1">
-          <X size={16} />
-        </button>
+        <button onClick={onClose} className="text-slate-600 hover:text-white transition p-1"><X size={16}/></button>
       </div>
-
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3" style={{ scrollbarWidth: "thin" }}>
-        {messages.map((m, i) => (
-          <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-            {m.role === "assistant" && (
-              <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mr-2 flex-shrink-0 mt-1">
-                <Bot size={12} className="text-emerald-400" />
-              </div>
-            )}
-            <div
-              className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed break-words overflow-wrap-anywhere overflow-hidden ${
-                m.role === "user"
-                  ? "bg-blue-600/80 text-white rounded-br-sm"
-                  : "bg-slate-800/80 text-slate-200 border border-slate-700/40 rounded-bl-sm"
-              }`}
-            >
-              {m.text}
-            </div>
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3" style={{ scrollbarWidth:"thin" }}>
+        {messages.map((m,i) => (
+          <div key={i} className={`flex ${m.role==="user"?"justify-end":"justify-start"}`}>
+            {m.role==="assistant" && <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mr-2 flex-shrink-0 mt-1"><Bot size={12} className="text-emerald-400"/></div>}
+            <div className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed break-words ${m.role==="user"?"bg-blue-600/80 text-white rounded-br-sm":"bg-slate-800/80 text-slate-200 border border-slate-700/40 rounded-bl-sm"}`}>{m.text}</div>
           </div>
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mr-2 flex-shrink-0 mt-1">
-              <Bot size={12} className="text-emerald-400" />
-            </div>
+            <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mr-2 flex-shrink-0 mt-1"><Bot size={12} className="text-emerald-400"/></div>
             <div className="bg-slate-800/80 border border-slate-700/40 rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">
-              {[0,1,2].map(i => (
-                <span key={i} className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce"
-                  style={{ animationDelay: `${i * 0.15}s` }} />
-              ))}
+              {[0,1,2].map(i => <span key={i} className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay:`${i*0.15}s` }}/>)}
             </div>
           </div>
         )}
-        <div ref={bottomRef} />
+        <div ref={bottomRef}/>
       </div>
-
-      {/* Input */}
       <div className="px-4 py-3 border-t border-slate-800 bg-[#0f1320] flex gap-2">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
+        <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!e.shiftKey&&sendMessage()}
           placeholder="Algorithm সম্পর্কে জিজ্ঞেস করুন…"
-          className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-[13px] text-slate-200 placeholder-slate-600 outline-none focus:border-emerald-500/50 transition"
-        />
-        <button
-          onClick={sendMessage}
-          disabled={loading || !input.trim()}
-          className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 p-2.5 rounded-xl transition active:scale-95"
-        >
-          <Send size={15} className="text-white" />
+          className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-[13px] text-slate-200 placeholder-slate-600 outline-none focus:border-emerald-500/50 transition"/>
+        <button onClick={sendMessage} disabled={loading||!input.trim()} className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 p-2.5 rounded-xl transition active:scale-95">
+          <Send size={15} className="text-white"/>
         </button>
       </div>
     </div>
@@ -293,29 +256,21 @@ const StepDetailPanel = ({ algo, steps }) => {
   return (
     <div className="mt-5 space-y-3">
       <div className="bg-[#0a0f1e] rounded-2xl border border-slate-700/40 p-5">
-        <div className="flex items-center gap-2 mb-3 text-slate-400">
-          <BookOpen size={14} className="text-blue-400" />
-          <span className="text-[10px] uppercase tracking-widest font-bold">How it works</span>
-        </div>
+        <div className="flex items-center gap-2 mb-3 text-slate-400"><BookOpen size={14} className="text-blue-400"/><span className="text-[10px] uppercase tracking-widest font-bold">How it works</span></div>
         <p className="text-slate-400 text-[13px] leading-relaxed">{info?.about}</p>
       </div>
       {steps.length > 0 && (
         <div className="bg-[#0a0f1e] rounded-2xl border border-slate-700/40 p-5">
           <div className="flex items-center gap-2 mb-3 text-slate-400">
-            <Layers size={14} className="text-purple-400" />
+            <Layers size={14} className="text-purple-400"/>
             <span className="text-[10px] uppercase tracking-widest font-bold">Step Log</span>
             <span className="ml-auto text-[10px] text-slate-600">{steps.length} steps</span>
           </div>
           <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1" style={{ scrollbarWidth:"thin" }}>
-            {steps.map((s, i) => (
-              <div key={i}
-                className={`flex items-start gap-2.5 rounded-xl px-3 py-2 text-[12px] transition-all
-                  ${i === steps.length - 1
-                    ? "bg-slate-700/50 border border-slate-600/50"
-                    : "bg-slate-900/40"}`}
-              >
-                <span className="text-slate-600 font-mono text-[10px] mt-0.5 min-w-[20px]">{i + 1}</span>
-                <span className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${s.color}`} />
+            {steps.map((s,i) => (
+              <div key={i} className={`flex items-start gap-2.5 rounded-xl px-3 py-2 text-[12px] transition-all ${i===steps.length-1?"bg-slate-700/50 border border-slate-600/50":"bg-slate-900/40"}`}>
+                <span className="text-slate-600 font-mono text-[10px] mt-0.5 min-w-[20px]">{i+1}</span>
+                <span className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${s.color}`}/>
                 <span className="text-slate-300 leading-snug">{s.text}</span>
               </div>
             ))}
@@ -327,23 +282,250 @@ const StepDetailPanel = ({ algo, steps }) => {
 };
 
 /* ════════════════════════════════════════════════════════════
+  SEARCH VISUALIZER
+════════════════════════════════════════════════════════════ */
+const SearchVisualizer = ({ algo }) => {
+  const [array, setArray]                   = useState(() => Array.from({length:16},()=>Math.floor(Math.random()*90)+5));
+  const [target, setTarget]                 = useState("");
+  const [sortedArr, setSortedArr]           = useState([]);
+  const [isRunning, setIsRunning]           = useState(false);
+  const [checkedIdx, setCheckedIdx]         = useState([]);
+  const [foundIdx, setFoundIdx]             = useState(null);
+  const [notFound, setNotFound]             = useState(false);
+  const [activeRange, setActiveRange]       = useState(null);
+  const [midIdx, setMidIdx]                 = useState(null);
+  const [eliminatedLeft, setEliminatedLeft] = useState(-1);
+  const [eliminatedRight, setEliminatedRight] = useState(999);
+  const [probeIdx, setProbeIdx]             = useState(null);
+  const [jumpIdx, setJumpIdx]               = useState(null);
+  const [linearIdx, setLinearIdx]           = useState(null);
+  const [searchSteps, setSearchSteps]       = useState([]);
+  const [customInput, setCustomInput]       = useState("");
+  const [customErr, setCustomErr]           = useState("");
+  const timersRef = useRef([]);
+
+  const displayArr = (algo === "Linear Search") ? array : (sortedArr.length ? sortedArr : [...array].sort((a,b)=>a-b));
+
+  const resetAnim = () => {
+    timersRef.current.forEach(clearTimeout); timersRef.current = [];
+    setCheckedIdx([]); setFoundIdx(null); setNotFound(false);
+    setActiveRange(null); setMidIdx(null); setProbeIdx(null);
+    setJumpIdx(null); setLinearIdx(null); setSearchSteps([]);
+    setEliminatedLeft(-1); setEliminatedRight(999);
+    setIsRunning(false);
+  };
+
+  useEffect(() => { resetAnim(); setSortedArr([]); }, [algo]);
+
+  const generateArray = () => {
+    resetAnim(); setSortedArr([]);
+    setArray(Array.from({length:16},()=>Math.floor(Math.random()*90)+5));
+    setCustomInput(""); setCustomErr("");
+  };
+
+  const applyCustom = () => {
+    const parts = customInput.split(",").map(s=>s.trim()).filter(Boolean);
+    const nums  = parts.map(Number);
+    if (!parts.length)             { setCustomErr("অন্তত একটি সংখ্যা দিন।"); return; }
+    if (nums.some(isNaN))          { setCustomErr("শুধু সংখ্যা দিন।"); return; }
+    if (nums.some(n=>n<1||n>999)) { setCustomErr("মান 1–999 এর মধ্যে হতে হবে।"); return; }
+    if (nums.length > 20)          { setCustomErr("সর্বোচ্চ 20টি সংখ্যা।"); return; }
+    setCustomErr(""); resetAnim(); setSortedArr([]);
+    setArray(nums);
+  };
+
+  const runSearch = () => {
+    const tgt = Number(target);
+    if (!target.trim() || isNaN(tgt)) return;
+    resetAnim();
+    setIsRunning(true);
+
+    let animations = [], sorted = [...array].sort((a,b)=>a-b);
+
+    if (algo === "Linear Search") {
+      animations = getLinearSearchAnimations(array, tgt);
+      sorted = array;
+    } else if (algo === "Binary Search") {
+      const res = getBinarySearchAnimations(array, tgt);
+      animations = res.animations; sorted = res.sortedArray;
+    } else if (algo === "Jump Search") {
+      const res = getJumpSearchAnimations(array, tgt);
+      animations = res.animations; sorted = res.sortedArray;
+    } else if (algo === "Fibonacci Search") {
+      const res = getFibonacciSearchAnimations(array, tgt);
+      animations = res.animations; sorted = res.sortedArray;
+    } else if (algo === "Interpolation Search") {
+      const res = getInterpolationSearchAnimations(array, tgt);
+      animations = res.animations; sorted = res.sortedArray;
+    }
+
+    if (algo !== "Linear Search") setSortedArr(sorted);
+
+    const DELAY = 650;
+    let liveChecked = [];
+
+    animations.forEach((anim, i) => {
+      const t = setTimeout(() => {
+        const [type, a, b] = anim;
+
+        if (type === "check") {
+          liveChecked = [...liveChecked, a];
+          setCheckedIdx([...liveChecked]);
+          setMidIdx(a);
+          setSearchSteps(p => [...p, { color:"bg-amber-500", text:`Checking index [${a}] = ${sorted[a] ?? array[a]}` }]);
+        } else if (type === "found") {
+          setFoundIdx(a); setMidIdx(null);
+          setSearchSteps(p => [...p, { color:"bg-green-500", text:`✅ Found ${tgt} at index [${a}]!` }]);
+        } else if (type === "notfound") {
+          setNotFound(true);
+          setSearchSteps(p => [...p, { color:"bg-red-500", text:`❌ ${tgt} not found in array.` }]);
+        } else if (type === "range") {
+          setActiveRange([a, b]);
+          setSearchSteps(p => [...p, { color:"bg-blue-400", text:`Search range: index [${a}] to [${b}]` }]);
+        } else if (type === "mid") {
+          setMidIdx(a);
+          setSearchSteps(p => [...p, { color:"bg-purple-400", text:`Mid pointer → index [${a}] = ${sorted[a]}` }]);
+        } else if (type === "goright") {
+          setEliminatedLeft(a);
+          setSearchSteps(p => [...p, { color:"bg-orange-400", text:`${sorted[a]} < ${tgt} → Search RIGHT half` }]);
+        } else if (type === "goleft") {
+          setEliminatedRight(a);
+          setSearchSteps(p => [...p, { color:"bg-orange-400", text:`${sorted[a]} > ${tgt} → Search LEFT half` }]);
+        } else if (type === "probe") {
+          setProbeIdx(a);
+          setSearchSteps(p => [...p, { color:"bg-cyan-400", text:`Probe position → index [${a}]` }]);
+        } else if (type === "jump") {
+          setJumpIdx(a);
+          setSearchSteps(p => [...p, { color:"bg-indigo-400", text:`Block jump → index [${a}] = ${sorted[a]}` }]);
+        } else if (type === "linear") {
+          setLinearIdx(a);
+          setSearchSteps(p => [...p, { color:"bg-yellow-400", text:`Linear scan → index [${a}]` }]);
+        } else if (type === "eliminate") {
+          setSearchSteps(p => [...p, { color:"bg-slate-500", text:`Eliminate range [${a}] to [${b}]` }]);
+        } else if (type === "fib") {
+          setSearchSteps(p => [...p, { color:"bg-violet-400", text:`Fibonacci: F(m-2)=${a}, F(m-1)=${b}, F(m)=${anim[3]}` }]);
+        }
+
+        if (i === animations.length - 1) setIsRunning(false);
+      }, i * DELAY);
+      timersRef.current.push(t);
+    });
+  };
+
+  const getBarColor = (idx) => {
+    if (foundIdx === idx)                                                    return "#22c55e";
+    if (notFound && checkedIdx.includes(idx))                                return "#ef4444";
+    if (midIdx === idx)                                                      return "#a855f7";
+    if (probeIdx === idx)                                                    return "#06b6d4";
+    if (jumpIdx === idx)                                                     return "#6366f1";
+    if (linearIdx === idx)                                                   return "#eab308";
+    if (idx <= eliminatedLeft || idx >= eliminatedRight)                     return "#1e293b";
+    if (activeRange && (idx < activeRange[0] || idx > activeRange[1]))       return "#1e293b";
+    if (checkedIdx.includes(idx))                                            return "#f97316";
+    return "#3b82f6";
+  };
+
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      {/* Array bars */}
+      <div className="rounded-2xl bg-[#060d1a] border border-slate-800/50 p-4 flex items-end justify-center gap-1 flex-wrap" style={{minHeight:"200px"}}>
+        {displayArr.map((val, idx) => (
+          <div key={idx} className="flex flex-col items-center gap-1">
+            <span className="text-[10px] font-bold font-mono" style={{color: foundIdx===idx?"#22c55e": midIdx===idx?"#a855f7":"#475569"}}>{val}</span>
+            <div style={{
+              width:"32px",
+              height:`${Math.max(20, val * 1.5)}px`,
+              backgroundColor: getBarColor(idx),
+              borderRadius:"4px 4px 0 0",
+              transition:"background-color 0.3s",
+              boxShadow: foundIdx===idx?"0 0 14px rgba(34,197,94,0.7)": midIdx===idx?"0 0 12px rgba(168,85,247,0.6)":"none",
+            }}/>
+            <span className="text-[9px] text-slate-700 font-mono">[{idx}]</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Status banner */}
+      {(foundIdx !== null || notFound) && (
+        <div className={`rounded-xl px-4 py-3 text-sm font-bold text-center border ${
+          foundIdx !== null
+            ? "bg-green-900/30 border-green-500/40 text-green-400"
+            : "bg-red-900/30 border-red-500/40 text-red-400"
+        }`}>
+          {foundIdx !== null ? `✅ Found ${target} at index [${foundIdx}]!` : `❌ ${target} not found in array`}
+        </div>
+      )}
+
+      {/* Legend */}
+      <div className="flex gap-3 flex-wrap text-[10px] font-semibold text-slate-500 justify-center">
+        {[["#3b82f6","Active"],["#f97316","Checked"],["#a855f7","Mid/Current"],["#22c55e","Found"],["#ef4444","Not Found"],["#1e293b","Eliminated"]].map(([c,l]) => (
+          <span key={l} className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background:c}}/>{l}
+          </span>
+        ))}
+      </div>
+
+      {/* Controls */}
+      <div className="bg-[#0f1320] rounded-2xl border border-slate-700/40 p-4 space-y-3">
+        <p className="text-[9px] uppercase tracking-widest text-slate-500">Target Value</p>
+        <input
+          value={target}
+          onChange={e => setTarget(e.target.value)}
+          onKeyDown={e => e.key==="Enter" && runSearch()}
+          placeholder="যে সংখ্যা খুঁজবে লিখুন…"
+          type="number"
+          className="w-full bg-slate-900 border border-amber-700/40 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-amber-500 text-slate-200 placeholder-slate-600"
+        />
+        <p className="text-[9px] uppercase tracking-widest text-slate-500 pt-1">Custom Array (optional)</p>
+        <div className="flex gap-2">
+          <input
+            value={customInput}
+            onChange={e => { setCustomInput(e.target.value); setCustomErr(""); }}
+            placeholder="10, 25, 3, 78…"
+            className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs outline-none focus:border-amber-500/60 text-slate-200 placeholder-slate-600"
+          />
+          <button onClick={applyCustom} className="bg-slate-700 hover:bg-slate-600 px-3 rounded-xl text-xs font-bold text-slate-300 transition active:scale-95">Set</button>
+        </div>
+        {customErr && <p className="text-[11px] text-red-400">{customErr}</p>}
+        {algo !== "Linear Search" && (
+          <p className="text-[10px] text-amber-600/80">⚠️ {algo} requires sorted array — auto-sorted হবে।</p>
+        )}
+      </div>
+
+      <button onClick={runSearch} disabled={isRunning || !target.trim()}
+        className="w-full bg-amber-600 hover:bg-amber-500 disabled:opacity-50 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-3 transition active:scale-95 text-sm shadow-lg shadow-amber-900/30">
+        <Play size={16} fill="currentColor"/> {isRunning ? "Searching…" : `Run ${algo}`}
+      </button>
+      <button onClick={generateArray} disabled={isRunning}
+        className="w-full border border-slate-700 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-800 text-sm transition disabled:opacity-40">
+        <RefreshCw size={14}/> New Random Array
+      </button>
+      <button onClick={resetAnim} disabled={isRunning}
+        className="w-full border border-slate-700 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-800 text-sm transition disabled:opacity-40">
+        <RotateCcw size={14}/> Reset
+      </button>
+
+      <StepDetailPanel algo={algo} steps={searchSteps}/>
+    </div>
+  );
+};
+
+/* ════════════════════════════════════════════════════════════
   TREE INTERACTIVE VISUALIZER
 ════════════════════════════════════════════════════════════ */
-  const TreeVisualizer = ({ algo }) => {
-  const [nodes, setNodes]           = useState(() => DEFAULT_TREE.map(n => ({ ...n, children:[...n.children] })));
-  const [nodeStates, setNodeStates] = useState({});
+const TreeVisualizer = ({ algo }) => {
+  const [nodes, setNodes]             = useState(() => DEFAULT_TREE.map(n => ({ ...n, children:[...n.children] })));
+  const [nodeStates, setNodeStates]   = useState({});
   const [activeEdges, setActiveEdges] = useState(new Set());
-  const [visitOrder, setVisitOrder] = useState([]);
-  const [isRunning, setIsRunning]   = useState(false);
-  const [treeSteps, setTreeSteps]   = useState([]);
-  const [queue, setQueue]           = useState([]);
-
-  const [selNode,   setSelNode]   = useState(null);
-  const [newValue,  setNewValue]  = useState("");
-  const [parentSel, setParentSel] = useState("");
-  const [editId,    setEditId]    = useState(null);
-  const [editVal,   setEditVal]   = useState("");
-
+  const [visitOrder, setVisitOrder]   = useState([]);
+  const [isRunning, setIsRunning]     = useState(false);
+  const [treeSteps, setTreeSteps]     = useState([]);
+  const [queue, setQueue]             = useState([]);
+  const [selNode, setSelNode]         = useState(null);
+  const [newValue, setNewValue]       = useState("");
+  const [parentSel, setParentSel]     = useState("");
+  const [editId, setEditId]           = useState(null);
+  const [editVal, setEditVal]         = useState("");
   const timersRef = useRef([]);
   const info = ALGO_INFO[algo];
 
@@ -352,7 +534,6 @@ const StepDetailPanel = ({ algo, steps }) => {
     setNodeStates({}); setActiveEdges(new Set()); setVisitOrder([]);
     setIsRunning(false); setTreeSteps([]); setQueue([]);
   };
-
   useEffect(() => { resetAnim(); }, [algo]);
 
   const nodeMap = {};
@@ -361,31 +542,31 @@ const StepDetailPanel = ({ algo, steps }) => {
   const addNode = () => {
     const val = newValue.trim(); if (!val) return;
     const pid = parentSel !== "" ? Number(parentSel) : null;
-    const newId = nodes.reduce((m, n) => Math.max(m, n.id), -1) + 1;
+    const newId = nodes.reduce((m,n) => Math.max(m,n.id), -1) + 1;
     let x = 300, y = 55;
     if (pid !== null) {
       const parent = nodes.find(n => n.id === pid);
-      if (parent) { const sibs = nodes.filter(n => parent.children.includes(n.id)); x = parent.x + (sibs.length - 1) * 60; y = parent.y + 110; }
+      if (parent) { const sibs = nodes.filter(n => parent.children.includes(n.id)); x = parent.x + (sibs.length-1)*60; y = parent.y+110; }
     }
-    setNodes([...nodes.map(n => n.id === pid ? { ...n, children:[...n.children, newId] } : n), { id:newId, value:val, x, y, children:[] }]);
+    setNodes([...nodes.map(n => n.id===pid ? { ...n, children:[...n.children, newId] } : n), { id:newId, value:val, x, y, children:[] }]);
     setNewValue(""); setParentSel(""); resetAnim();
   };
 
   const deleteNode = (delId) => {
     if (nodes.length <= 1) return;
-    setNodes(nodes.filter(n => n.id !== delId).map(n => ({ ...n, children:n.children.filter(c => c !== delId) })));
-    if (selNode === delId) setSelNode(null); resetAnim();
+    setNodes(nodes.filter(n=>n.id!==delId).map(n=>({ ...n, children:n.children.filter(c=>c!==delId) })));
+    if (selNode===delId) setSelNode(null); resetAnim();
   };
 
   const confirmEdit = (id) => {
     if (!editVal.trim()) { setEditId(null); return; }
-    setNodes(prev => prev.map(n => n.id === id ? { ...n, value:editVal.trim() } : n));
+    setNodes(prev => prev.map(n => n.id===id ? { ...n, value:editVal.trim() } : n));
     setEditId(null); setEditVal("");
   };
 
   const runAnim = () => {
     resetAnim();
-    const anims = algo === "Tree BFS" ? getTreeBFSAnimations(nodes) : getTreeDFSAnimations(nodes);
+    const anims = algo==="Tree BFS" ? getTreeBFSAnimations(nodes) : getTreeDFSAnimations(nodes);
     if (!anims.length) return;
     setIsRunning(true);
     const DELAY = 700;
@@ -397,62 +578,57 @@ const StepDetailPanel = ({ algo, steps }) => {
         const [type, id1, id2] = a;
         const nodeName = nodeMap[id1]?.value ?? id1;
         const node2Name = nodeMap[id2]?.value ?? id2;
-
-        if (type === "enqueue") {
-          liveQueue = [...liveQueue, nodeName];
-          setQueue([...liveQueue]);
+        if (type==="enqueue") {
+          liveQueue = [...liveQueue, nodeName]; setQueue([...liveQueue]);
           setNodeStates(p => ({ ...p, [id1]:"queued" }));
           setTreeSteps(p => [...p, { color:"bg-blue-500", text:`Enqueue "${nodeName}" → Queue: [${liveQueue.join(", ")}]` }]);
-        } else if (type === "visit") {
-          liveQueue = liveQueue.filter(v => v !== nodeName);
-          setQueue([...liveQueue]);
+        } else if (type==="visit") {
+          liveQueue = liveQueue.filter(v=>v!==nodeName); setQueue([...liveQueue]);
           setNodeStates(p => ({ ...p, [id1]:"visiting" }));
           setVisitOrder(p => [...p, id1]);
-          setTreeSteps(p => [...p, { color:"bg-purple-500", text:`Visiting "${nodeName}" — ${labels.visit || "processing node"}` }]);
-        } else if (type === "edge") {
+          setTreeSteps(p => [...p, { color:"bg-purple-500", text:`Visiting "${nodeName}" — ${labels.visit||"processing node"}` }]);
+        } else if (type==="edge") {
           setActiveEdges(p => new Set([...p, `${id1}-${id2}`]));
           setTreeSteps(p => [...p, { color:"bg-indigo-400", text:`Edge: "${nodeName}" → "${node2Name}"` }]);
-        } else if (type === "done") {
+        } else if (type==="done") {
           setNodeStates(p => ({ ...p, [id1]:"done" }));
           setTreeSteps(p => [...p, { color:"bg-green-500", text:`"${nodeName}" fully processed ✓` }]);
         }
-
-        if (i === anims.length - 1) setIsRunning(false);
-      }, i * DELAY);
+        if (i===anims.length-1) setIsRunning(false);
+      }, i*DELAY);
       timersRef.current.push(t);
     });
   };
 
-  const getC = (id) => NC[nodeStates[id] || (selNode === id ? "selected" : "default")];
-  const edgeActive = (a, b) => activeEdges.has(`${a}-${b}`) || activeEdges.has(`${b}-${a}`);
+  const getC = (id) => NC[nodeStates[id] || (selNode===id?"selected":"default")];
+  const edgeActive = (a,b) => activeEdges.has(`${a}-${b}`) || activeEdges.has(`${b}-${a}`);
   const edges = nodes.flatMap(n => n.children.map(c => [n.id, c]));
   const visitLabel = visitOrder.map(id => nodeMap[id]?.value ?? id).join(" → ");
 
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="rounded-2xl bg-[#060d1a] border border-slate-800/50 overflow-hidden">
-        <svg viewBox="0 0 620 320" className="w-full" style={{ minHeight:"260px" }}>
-          {edges.map(([a, b]) => {
-            const na = nodeMap[a], nb = nodeMap[b]; if (!na || !nb) return null;
+        <svg viewBox="0 0 620 320" className="w-full" style={{minHeight:"260px"}}>
+          {edges.map(([a,b]) => {
+            const na=nodeMap[a], nb=nodeMap[b]; if (!na||!nb) return null;
             return <line key={`e-${a}-${b}`} x1={na.x} y1={na.y} x2={nb.x} y2={nb.y}
-              stroke={edgeActive(a,b) ? "#6366f1" : "#1e293b"} strokeWidth={edgeActive(a,b) ? 2.5 : 1.5}
-              strokeLinecap="round" style={{ transition:"stroke 0.3s" }} />;
+              stroke={edgeActive(a,b)?"#6366f1":"#1e293b"} strokeWidth={edgeActive(a,b)?2.5:1.5} strokeLinecap="round" style={{transition:"stroke 0.3s"}}/>;
           })}
           {nodes.map(n => {
             const c = getC(n.id);
             return (
-              <g key={`n-${n.id}`} style={{ cursor:"pointer" }} onClick={() => setSelNode(selNode === n.id ? null : n.id)}>
-                <circle cx={n.x} cy={n.y} r={24} fill={c.fill} stroke={c.stroke} strokeWidth={selNode===n.id?3:2} style={{ transition:"fill 0.3s,stroke 0.3s" }} />
-                {editId === n.id ? (
+              <g key={`n-${n.id}`} style={{cursor:"pointer"}} onClick={() => setSelNode(selNode===n.id?null:n.id)}>
+                <circle cx={n.x} cy={n.y} r={24} fill={c.fill} stroke={c.stroke} strokeWidth={selNode===n.id?3:2} style={{transition:"fill 0.3s,stroke 0.3s"}}/>
+                {editId===n.id ? (
                   <foreignObject x={n.x-18} y={n.y-10} width={36} height={22}>
                     <input autoFocus value={editVal} onChange={e=>setEditVal(e.target.value)}
                       onKeyDown={e=>{if(e.key==="Enter")confirmEdit(n.id);if(e.key==="Escape")setEditId(null);}}
                       onBlur={()=>confirmEdit(n.id)}
-                      style={{ width:"100%",background:"transparent",border:"none",outline:"none",color:"white",fontWeight:700,fontSize:"13px",textAlign:"center" }} />
+                      style={{width:"100%",background:"transparent",border:"none",outline:"none",color:"white",fontWeight:700,fontSize:"13px",textAlign:"center"}}/>
                   </foreignObject>
                 ) : (
                   <text x={n.x} y={n.y} textAnchor="middle" dominantBaseline="central" fontSize="13" fontWeight="700" fill={c.text}
-                    style={{ fontFamily:"monospace",userSelect:"none" }}
+                    style={{fontFamily:"monospace",userSelect:"none"}}
                     onDoubleClick={e=>{e.stopPropagation();setEditId(n.id);setEditVal(n.value);}}>
                     {n.value}
                   </text>
@@ -469,66 +645,57 @@ const StepDetailPanel = ({ algo, steps }) => {
         </svg>
       </div>
 
-      {algo === "Tree BFS" && isRunning && (
+      {algo==="Tree BFS" && isRunning && (
         <div className="bg-[#0f1320] rounded-xl border border-blue-800/40 px-4 py-2.5 flex items-center gap-3">
           <span className="text-[9px] uppercase tracking-widest text-blue-500 font-bold flex-shrink-0">Queue</span>
           <div className="flex gap-2 flex-wrap">
-            {queue.length === 0
-              ? <span className="text-slate-600 text-xs">empty</span>
-              : queue.map((v, i) => (
-                  <span key={i} className="bg-blue-900/50 border border-blue-700/40 text-blue-300 text-xs font-bold px-2 py-0.5 rounded-lg">{v}</span>
-                ))
-            }
+            {queue.length===0 ? <span className="text-slate-600 text-xs">empty</span>
+              : queue.map((v,i) => <span key={i} className="bg-blue-900/50 border border-blue-700/40 text-blue-300 text-xs font-bold px-2 py-0.5 rounded-lg">{v}</span>)}
           </div>
         </div>
       )}
-
       {visitLabel && (
         <div className="bg-[#0f1320] rounded-xl border border-slate-700/40 px-4 py-2.5">
           <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1">Visit Order</p>
           <p className="text-sm font-bold text-indigo-400 font-mono">{visitLabel}</p>
         </div>
       )}
-
       <div className="flex gap-3 flex-wrap text-[10px] font-semibold text-slate-500 justify-center">
         {[["default","Unvisited"],["queued","Queued"],["visiting","Visiting"],["done","Done"],["selected","Selected"]].map(([s,l]) => (
           <span key={s} className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full inline-block border" style={{ background:NC[s].fill,borderColor:NC[s].stroke }} />{l}
+            <span className="w-2.5 h-2.5 rounded-full inline-block border" style={{background:NC[s].fill,borderColor:NC[s].stroke}}/>{l}
           </span>
         ))}
       </div>
-
       <div className="bg-[#0f1320] rounded-2xl border border-slate-700/40 p-4 space-y-3">
         <p className="text-[9px] uppercase tracking-widest text-slate-500">Add Node</p>
         <input value={newValue} onChange={e=>setNewValue(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addNode()}
           placeholder="Node value (e.g. H)"
-          className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm outline-none focus:border-purple-500 text-slate-200 placeholder-slate-600" />
+          className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm outline-none focus:border-purple-500 text-slate-200 placeholder-slate-600"/>
         <select value={parentSel} onChange={e=>setParentSel(e.target.value)}
           className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm outline-none text-slate-300 cursor-pointer">
           <option value="">No parent (new root)</option>
           {nodes.map(n => <option key={n.id} value={n.id}>Parent: {n.value} (id {n.id})</option>)}
         </select>
         <button onClick={addNode} className="w-full bg-purple-600 hover:bg-purple-500 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 text-sm transition active:scale-95">
-          <Plus size={15} /> Add Node
+          <Plus size={15}/> Add Node
         </button>
         {selNode !== null && (
           <div className="bg-slate-800/50 rounded-xl p-3 border border-slate-700/30 text-xs text-slate-400 space-y-1">
             <p className="font-bold text-slate-300">Selected: <span className="text-purple-400">{nodeMap[selNode]?.value}</span></p>
-            <p>Double-click node to edit value · Click <span className="text-red-400">×</span> to delete</p>
+            <p>Double-click node to edit · Click <span className="text-red-400">×</span> to delete</p>
           </div>
         )}
       </div>
-
       <button onClick={runAnim} disabled={isRunning}
         className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-purple-900/30 transition active:scale-95 text-sm">
-        <Play size={16} fill="currentColor" /> {isRunning ? "Running…" : `Run ${algo}`}
+        <Play size={16} fill="currentColor"/> {isRunning?"Running…":`Run ${algo}`}
       </button>
       <button onClick={()=>{resetAnim();setNodes(DEFAULT_TREE.map(n=>({...n,children:[...n.children]})));setSelNode(null);}}
         className="w-full border border-slate-700 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-800 text-sm transition">
-        <RotateCcw size={14} /> Reset to Default
+        <RotateCcw size={14}/> Reset to Default
       </button>
-
-      <StepDetailPanel algo={algo} steps={treeSteps} />
+      <StepDetailPanel algo={algo} steps={treeSteps}/>
     </div>
   );
 };
@@ -537,20 +704,19 @@ const StepDetailPanel = ({ algo, steps }) => {
   GRAPH INTERACTIVE VISUALIZER
 ════════════════════════════════════════════════════════════ */
 const GraphVisualizer = ({ algo }) => {
-  const [gNodes, setGNodes]           = useState(() => DEFAULT_GRAPH_NODES.map(n=>({...n})));
-  const [gEdges, setGEdges]           = useState(() => DEFAULT_GRAPH_EDGES.map(e=>[...e]));
-  const [nodeStates, setNodeStates]   = useState({});
-  const [activeEdges, setActiveEdges] = useState(new Set());
-  const [visitOrder, setVisitOrder]   = useState([]);
-  const [isRunning, setIsRunning]     = useState(false);
-  const [startNode, setStartNode]     = useState(0);
-  const [graphSteps, setGraphSteps]   = useState([]);
-  const [liveQueue, setLiveQueue]     = useState([]);
-
-  const [edgeFrom, setEdgeFrom] = useState("");
-  const [edgeTo,   setEdgeTo]   = useState("");
-  const [dragging, setDragging] = useState(null);
-  const svgRef = useRef(null);
+  const [gNodes, setGNodes]             = useState(() => DEFAULT_GRAPH_NODES.map(n=>({...n})));
+  const [gEdges, setGEdges]             = useState(() => DEFAULT_GRAPH_EDGES.map(e=>[...e]));
+  const [nodeStates, setNodeStates]     = useState({});
+  const [activeEdges, setActiveEdges]   = useState(new Set());
+  const [visitOrder, setVisitOrder]     = useState([]);
+  const [isRunning, setIsRunning]       = useState(false);
+  const [startNode, setStartNode]       = useState(0);
+  const [graphSteps, setGraphSteps]     = useState([]);
+  const [liveQueue, setLiveQueue]       = useState([]);
+  const [edgeFrom, setEdgeFrom]         = useState("");
+  const [edgeTo, setEdgeTo]             = useState("");
+  const [dragging, setDragging]         = useState(null);
+  const svgRef    = useRef(null);
   const timersRef = useRef([]);
   const info = ALGO_INFO[algo];
 
@@ -559,7 +725,6 @@ const GraphVisualizer = ({ algo }) => {
     setNodeStates({}); setActiveEdges(new Set()); setVisitOrder([]);
     setIsRunning(false); setGraphSteps([]); setLiveQueue([]);
   };
-
   useEffect(() => { resetAnim(); }, [algo]);
 
   const nodeMap = {};
@@ -581,9 +746,9 @@ const GraphVisualizer = ({ algo }) => {
   };
 
   const addEdge = () => {
-    const a=Number(edgeFrom),b=Number(edgeTo);
-    if(isNaN(a)||isNaN(b)||a===b) return;
-    if(!gEdges.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a))) setGEdges(prev=>[...prev,[a,b]]);
+    const a=Number(edgeFrom), b=Number(edgeTo);
+    if (isNaN(a)||isNaN(b)||a===b) return;
+    if (!gEdges.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a))) setGEdges(prev=>[...prev,[a,b]]);
     setEdgeFrom(""); setEdgeTo(""); resetAnim();
   };
 
@@ -591,7 +756,7 @@ const GraphVisualizer = ({ algo }) => {
 
   const onMouseDown = (e,id) => { e.preventDefault(); setDragging(id); };
   const onMouseMove = useCallback((e) => {
-    if(dragging===null||!svgRef.current) return;
+    if (dragging===null||!svgRef.current) return;
     const rect=svgRef.current.getBoundingClientRect();
     setGNodes(prev=>prev.map(n=>n.id===dragging?{...n,x:Math.round((e.clientX-rect.left)*(620/rect.width)),y:Math.round((e.clientY-rect.top)*(360/rect.height))}:n));
   },[dragging]);
@@ -599,37 +764,33 @@ const GraphVisualizer = ({ algo }) => {
 
   const runAnim = () => {
     resetAnim();
-    const anims = algo==="Graph BFS"
-      ? getGraphBFSAnimations(gNodes,gEdges,startNode)
-      : getGraphDFSAnimations(gNodes,gEdges,startNode);
-    if(!anims.length) return;
+    const anims = algo==="Graph BFS" ? getGraphBFSAnimations(gNodes,gEdges,startNode) : getGraphDFSAnimations(gNodes,gEdges,startNode);
+    if (!anims.length) return;
     setIsRunning(true);
     const DELAY=700;
     const labels=info?.stepLabels||{};
     let lq=[];
 
-    anims.forEach((a,i)=>{
+    anims.forEach((a,i) => {
       const t=setTimeout(()=>{
         const [type,id1,id2]=a;
-        if(type==="enqueue"){
-          lq=[...lq,id1];
-          setLiveQueue([...lq]);
+        if (type==="enqueue") {
+          lq=[...lq,id1]; setLiveQueue([...lq]);
           setNodeStates(p=>({...p,[id1]:"queued"}));
           setGraphSteps(p=>[...p,{color:"bg-blue-500",text:`Node ${id1} discovered → Queue: [${lq.join("→")}]`}]);
-        } else if(type==="visit"){
-          lq=lq.filter(v=>v!==id1);
-          setLiveQueue([...lq]);
+        } else if (type==="visit") {
+          lq=lq.filter(v=>v!==id1); setLiveQueue([...lq]);
           setNodeStates(p=>({...p,[id1]:"visiting"}));
           setVisitOrder(p=>[...p,id1]);
           setGraphSteps(p=>[...p,{color:"bg-purple-500",text:`Visiting Node ${id1} — ${labels.visit||"processing"}`}]);
-        } else if(type==="edge"){
+        } else if (type==="edge") {
           setActiveEdges(p=>new Set([...p,`${id1}-${id2}`]));
           setGraphSteps(p=>[...p,{color:"bg-indigo-400",text:`Exploring edge: ${id1} → ${id2}`}]);
-        } else if(type==="done"){
+        } else if (type==="done") {
           setNodeStates(p=>({...p,[id1]:"done"}));
           setGraphSteps(p=>[...p,{color:"bg-green-500",text:`Node ${id1} fully explored ✓`}]);
         }
-        if(i===anims.length-1) setIsRunning(false);
+        if (i===anims.length-1) setIsRunning(false);
       },i*DELAY);
       timersRef.current.push(t);
     });
@@ -643,9 +804,9 @@ const GraphVisualizer = ({ algo }) => {
     <div className="flex flex-col gap-4 w-full">
       <div className="rounded-2xl bg-[#060d1a] border border-slate-800/50 overflow-hidden"
         onMouseMove={onMouseMove} onMouseUp={onMouseUp} onMouseLeave={onMouseUp}>
-        <svg ref={svgRef} viewBox="0 0 620 360" className="w-full" style={{ minHeight:"280px",cursor:dragging!==null?"grabbing":"default" }}>
+        <svg ref={svgRef} viewBox="0 0 620 360" className="w-full" style={{minHeight:"280px",cursor:dragging!==null?"grabbing":"default"}}>
           {gEdges.map(([a,b])=>{
-            const na=nodeMap[a],nb=nodeMap[b]; if(!na||!nb) return null;
+            const na=nodeMap[a],nb=nodeMap[b]; if (!na||!nb) return null;
             const mx=(na.x+nb.x)/2,my=(na.y+nb.y)/2;
             const active=eActive(a,b);
             return (
@@ -679,26 +840,21 @@ const GraphVisualizer = ({ algo }) => {
           })}
         </svg>
       </div>
-
       {algo==="Graph BFS" && isRunning && (
         <div className="bg-[#0f1320] rounded-xl border border-blue-800/40 px-4 py-2.5 flex items-center gap-3">
           <span className="text-[9px] uppercase tracking-widest text-blue-500 font-bold flex-shrink-0">Queue</span>
           <div className="flex gap-2 flex-wrap">
-            {liveQueue.length===0
-              ? <span className="text-slate-600 text-xs">empty</span>
-              : liveQueue.map((v,i)=><span key={i} className="bg-blue-900/50 border border-blue-700/40 text-blue-300 text-xs font-bold px-2 py-0.5 rounded-lg">{v}</span>)
-            }
+            {liveQueue.length===0 ? <span className="text-slate-600 text-xs">empty</span>
+              : liveQueue.map((v,i)=><span key={i} className="bg-blue-900/50 border border-blue-700/40 text-blue-300 text-xs font-bold px-2 py-0.5 rounded-lg">{v}</span>)}
           </div>
         </div>
       )}
-
       {visitLabel && (
         <div className="bg-[#0f1320] rounded-xl border border-slate-700/40 px-4 py-2.5">
           <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1">Visit Order</p>
           <p className="text-sm font-bold text-indigo-400 font-mono">{visitLabel}</p>
         </div>
       )}
-
       <div className="flex gap-3 flex-wrap text-[10px] font-semibold text-slate-500 justify-center">
         {[["selected","Start"],["queued","Queued"],["visiting","Visiting"],["done","Done"]].map(([s,l])=>(
           <span key={s} className="flex items-center gap-1">
@@ -707,7 +863,6 @@ const GraphVisualizer = ({ algo }) => {
         ))}
         <span className="text-slate-700 text-[9px]">| Drag to move nodes</span>
       </div>
-
       <div className="bg-[#0f1320] rounded-2xl border border-slate-700/40 p-4 space-y-3">
         <div>
           <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1.5">Start Node</p>
@@ -733,7 +888,6 @@ const GraphVisualizer = ({ algo }) => {
         </div>
         <p className="text-[10px] text-slate-600">Click <span className="text-red-400">×</span> on node/edge to delete</p>
       </div>
-
       <button onClick={runAnim} disabled={isRunning}
         className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-purple-900/30 transition active:scale-95 text-sm">
         <Play size={16} fill="currentColor"/> {isRunning?"Running…":`Run ${algo}`}
@@ -742,7 +896,6 @@ const GraphVisualizer = ({ algo }) => {
         className="w-full border border-slate-700 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-800 text-sm transition">
         <RotateCcw size={14}/> Reset to Default
       </button>
-
       <StepDetailPanel algo={algo} steps={graphSteps}/>
     </div>
   );
@@ -756,20 +909,14 @@ const DSStepLog = ({ algo, log }) => {
   return (
     <div className="mt-5 space-y-3">
       <div className="bg-[#0a0f1e] rounded-2xl border border-slate-700/40 p-5">
-        <div className="flex items-center gap-2 mb-3 text-slate-400">
-          <BookOpen size={14} className="text-green-400"/>
-          <span className="text-[10px] uppercase tracking-widest font-bold">How it works</span>
-        </div>
+        <div className="flex items-center gap-2 mb-3 text-slate-400"><BookOpen size={14} className="text-green-400"/><span className="text-[10px] uppercase tracking-widest font-bold">How it works</span></div>
         <p className="text-slate-400 text-[13px] leading-relaxed">{info?.about}</p>
       </div>
       {log.length > 0 && (
         <div className="bg-[#0a0f1e] rounded-2xl border border-slate-700/40 p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Layers size={14} className="text-purple-400"/>
-            <span className="text-[10px] uppercase tracking-widest font-bold text-slate-400">Operation Log</span>
-          </div>
+          <div className="flex items-center gap-2 mb-3"><Layers size={14} className="text-purple-400"/><span className="text-[10px] uppercase tracking-widest font-bold text-slate-400">Operation Log</span></div>
           <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-            {log.map((entry, i) => (
+            {log.map((entry,i) => (
               <div key={i} className={`flex items-start gap-2.5 rounded-xl px-3 py-2 text-[12px] ${i===log.length-1?"bg-slate-700/50 border border-slate-600/50":"bg-slate-900/40"}`}>
                 <span className="text-slate-600 font-mono text-[10px] mt-0.5 min-w-[20px]">{i+1}</span>
                 <span className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${entry.color}`}/>
@@ -786,29 +933,30 @@ const DSStepLog = ({ algo, log }) => {
 /* ════════════════════════════════════════════════════════════
   HELPERS
 ════════════════════════════════════════════════════════════ */
-const makeArray   = (size) => Array.from({length:size},()=>Math.floor(Math.random()*270)+30);
-const isDLL       = (a) => a==="Double Linked List";
-const isSLL       = (a) => a==="Linked List";
-const isTreeAlgo  = (a) => a==="Tree BFS"||a==="Tree DFS";
-const isGraphAlgo = (a) => a==="Graph BFS"||a==="Graph DFS";
-const isTG        = (a) => isTreeAlgo(a)||isGraphAlgo(a);
+const makeArray    = (size) => Array.from({length:size},()=>Math.floor(Math.random()*270)+30);
+const isDLL        = (a) => a==="Double Linked List";
+const isSLL        = (a) => a==="Linked List";
+const isTreeAlgo   = (a) => a==="Tree BFS"||a==="Tree DFS";
+const isGraphAlgo  = (a) => a==="Graph BFS"||a==="Graph DFS";
+const isTG         = (a) => isTreeAlgo(a)||isGraphAlgo(a);
+const isSearchAlgo = (a) => ["Linear Search","Binary Search","Jump Search","Fibonacci Search","Interpolation Search"].includes(a);
 
 /* ════════════════════════════════════════════════════════════
   MAIN COMPONENT
 ════════════════════════════════════════════════════════════ */
 const Visualizer = () => {
-  const [selectedAlgo,      setSelectedAlgo]      = useState("");
-  const [selectedPathAlgo,  setSelectedPathAlgo]  = useState("");
-  const [selectedGraphAlgo, setSelectedGraphAlgo] = useState("");
-  const [isSorting, setIsSorting] = useState(false);
-  const [showCode,  setShowCode]  = useState(false);
-  const [showChat,  setShowChat]  = useState(false);   // ← NEW chatbot state
+  const [selectedAlgo,       setSelectedAlgo]       = useState("");
+  const [selectedPathAlgo,   setSelectedPathAlgo]   = useState("");
+  const [selectedGraphAlgo,  setSelectedGraphAlgo]  = useState("");
+  const [selectedSearchAlgo, setSelectedSearchAlgo] = useState("");
+  const [isSorting,  setIsSorting]  = useState(false);
+  const [showCode,   setShowCode]   = useState(false);
+  const [showChat,   setShowChat]   = useState(false);
 
   const [array,     setArray]     = useState([]);
   const [speed,     setSpeed]     = useState(70);
   const [arraySize, setArraySize] = useState(14);
 
-  /* ── NEW: custom array input ── */
   const [customInput,    setCustomInput]    = useState("");
   const [customInputErr, setCustomInputErr] = useState("");
   const [useCustomArray, setUseCustomArray] = useState(false);
@@ -831,7 +979,7 @@ const Visualizer = () => {
 
   const isSortingRef = useRef(false);
   const timeoutsRef  = useRef([]);
-  const activeAlgo   = selectedAlgo||selectedPathAlgo||selectedGraphAlgo;
+  const activeAlgo   = selectedAlgo||selectedPathAlgo||selectedGraphAlgo||selectedSearchAlgo;
 
   useEffect(()=>{
     resetArray();
@@ -839,7 +987,7 @@ const Visualizer = () => {
     setStackInput(""); setQueueInput(""); setLlInput(""); setDllInput("");
     setCustomInput(""); setCustomInputErr(""); setUseCustomArray(false);
     return ()=>clearTimeouts();
-  },[selectedAlgo,selectedPathAlgo,selectedGraphAlgo,arraySize]); // eslint-disable-line
+  },[selectedAlgo,selectedPathAlgo,selectedGraphAlgo,selectedSearchAlgo,arraySize]); // eslint-disable-line
 
   const clearTimeouts = ()=>{timeoutsRef.current.forEach(clearTimeout);timeoutsRef.current=[];};
   const resetVisual = ()=>{
@@ -853,27 +1001,24 @@ const Visualizer = () => {
     setUseCustomArray(false);
   };
 
-  /* ── Parse & apply custom array ── */
   const applyCustomArray = () => {
-    const parts = customInput.split(",").map(s => s.trim()).filter(Boolean);
+    const parts = customInput.split(",").map(s=>s.trim()).filter(Boolean);
     const nums = parts.map(Number);
-    if (parts.length === 0) { setCustomInputErr("অন্তত একটি সংখ্যা দিন।"); return; }
-    if (nums.some(isNaN))   { setCustomInputErr("শুধু সংখ্যা দিন, comma দিয়ে আলাদা করুন।"); return; }
-    if (nums.some(n => n < 1 || n > 300)) { setCustomInputErr("প্রতিটি মান 1–300 এর মধ্যে হতে হবে।"); return; }
-    if (nums.length > 30)   { setCustomInputErr("সর্বোচ্চ 30টি সংখ্যা দেওয়া যাবে।"); return; }
+    if (parts.length===0) { setCustomInputErr("অন্তত একটি সংখ্যা দিন।"); return; }
+    if (nums.some(isNaN)) { setCustomInputErr("শুধু সংখ্যা দিন, comma দিয়ে আলাদা করুন।"); return; }
+    if (nums.some(n=>n<1||n>300)) { setCustomInputErr("প্রতিটি মান 1–300 এর মধ্যে হতে হবে।"); return; }
+    if (nums.length>30) { setCustomInputErr("সর্বোচ্চ 30টি সংখ্যা দেওয়া যাবে।"); return; }
     setCustomInputErr("");
     clearTimeouts(); resetVisual();
-    setArray(nums);
-    setArraySize(nums.length);
-    setUseCustomArray(true);
-    setIsSorting(false); isSortingRef.current = false;
+    setArray(nums); setArraySize(nums.length); setUseCustomArray(true);
+    setIsSorting(false); isSortingRef.current=false;
   };
 
   const getBarColor=(idx)=>{
-    if(sortedIndices.includes(idx))   return "#22c55e";
-    if(swappingIndices.includes(idx)) return "#a855f7";
-    if(comparingIndices.includes(idx))return "#ef4444";
-    if(pivotIndex===idx)              return "#eab308";
+    if(sortedIndices.includes(idx))    return "#22c55e";
+    if(swappingIndices.includes(idx))  return "#a855f7";
+    if(comparingIndices.includes(idx)) return "#ef4444";
+    if(pivotIndex===idx)               return "#eab308";
     return "#3b82f6";
   };
 
@@ -901,22 +1046,15 @@ const Visualizer = () => {
         if(!isSortingRef.current) return;
         const [type,i1,i2,v1,v2]=anim;
         setCurrentStep(i+1);
-
         if(type==="compare"){
           liveC++;setStepStats({compares:liveC,swaps:liveS});
           setComparingIndices([i1,i2]);setSwappingIndices([]);setPivotIndex(null);
           const a=workArr[i1],b=workArr[i2];
-          setSortSteps(p=>[...p,{
-            color:"bg-red-500",
-            text:`Compare index[${i1}]=${a} vs index[${i2}]=${b} → ${a>b?"left > right, will swap":"left ≤ right, no swap"}`
-          }]);
+          setSortSteps(p=>[...p,{color:"bg-red-500",text:`Compare index[${i1}]=${a} vs index[${i2}]=${b} → ${a>b?"left > right, will swap":"left ≤ right, no swap"}`}]);
         } else if(type==="swap"){
           liveS++;setStepStats({compares:liveC,swaps:liveS});
           setSwappingIndices([i1,i2]);setComparingIndices([]);
-          setSortSteps(p=>[...p,{
-            color:"bg-purple-500",
-            text:`Swap index[${i1}]=${workArr[i1]} ↔ index[${i2}]=${workArr[i2]}`
-          }]);
+          setSortSteps(p=>[...p,{color:"bg-purple-500",text:`Swap index[${i1}]=${workArr[i1]} ↔ index[${i2}]=${workArr[i2]}`}]);
           workArr[i1]=v1;workArr[i2]=v2;setArray([...workArr]);
         } else if(type==="overwrite"){
           liveC++;setStepStats({compares:liveC,swaps:liveS});
@@ -930,7 +1068,6 @@ const Visualizer = () => {
           setSortedIndices(prev=>prev.includes(i1)?prev:[...prev,i1]);
           setSortSteps(p=>[...p,{color:"bg-green-500",text:`index[${i1}]=${workArr[i1]} is now in its final sorted position ✓`}]);
         }
-
         if(i===anims.length-1){
           setTimeout(()=>{
             isSortingRef.current=false;setIsSorting(false);
@@ -959,17 +1096,15 @@ const Visualizer = () => {
     if(action==="add"&&val.trim()==="") return;
     let result;
     try{
-      if(selectedPathAlgo==="Stack")             result=stackAction([...dsData],action==="add"?"push":"pop",val);
-      else if(selectedPathAlgo==="Queue")        result=queueAction([...dsData],action==="add"?"enqueue":"dequeue",val);
-      else if(selectedPathAlgo==="Linked List")  result=linkedListAction([...dsData],action==="add"?"insert":"delete",val);
+      if(selectedPathAlgo==="Stack")                   result=stackAction([...dsData],action==="add"?"push":"pop",val);
+      else if(selectedPathAlgo==="Queue")              result=queueAction([...dsData],action==="add"?"enqueue":"dequeue",val);
+      else if(selectedPathAlgo==="Linked List")        result=linkedListAction([...dsData],action==="add"?"insert":"delete",val);
       else if(selectedPathAlgo==="Double Linked List") result=doubleLinkedListAction([...dsData],action==="add"?"insert":"delete",val);
     }catch(e){console.error(e);return;}
     if(!Array.isArray(result)) return;
 
-    const before=dsData.length;
-    const after=result.length;
-    let logText="";let logColor="bg-blue-500";
-
+    const before=dsData.length, after=result.length;
+    let logText="", logColor="bg-blue-500";
     if(selectedPathAlgo==="Stack"){
       if(action==="add"){ logText=`Push "${val}" → Stack top is now "${val}". Size: ${after}`; logColor="bg-orange-500"; }
       else { logText=before>0?`Pop "${dsData[dsData.length-1]}" from top. New top: "${result[result.length-1]??'(empty)'}". Size: ${after}`:`Stack is empty — nothing to pop`; logColor="bg-red-500"; }
@@ -985,8 +1120,7 @@ const Visualizer = () => {
     }
 
     setDsLog(prev=>[...prev,{color:logColor,text:logText}]);
-    setDsData(result);
-    clearDSInput();
+    setDsData(result); clearDSInput();
   };
 
   const pct=totalSteps?Math.round((currentStep/totalSteps)*100):0;
@@ -998,11 +1132,12 @@ const Visualizer = () => {
   return (
     <div className="min-h-screen bg-[#060913] text-slate-200 flex flex-col font-sans">
       <Header
-        selectedAlgo={selectedAlgo}           setSelectedAlgo={setSelectedAlgo}
-        selectedPathAlgo={selectedPathAlgo}   setSelectedPathAlgo={setSelectedPathAlgo}
-        selectedGraphAlgo={selectedGraphAlgo} setSelectedGraphAlgo={setSelectedGraphAlgo}
-        showCode={showCode}                   setShowCode={setShowCode}
-        showChat={showChat}                   setShowChat={setShowChat}
+        selectedAlgo={selectedAlgo}             setSelectedAlgo={setSelectedAlgo}
+        selectedPathAlgo={selectedPathAlgo}     setSelectedPathAlgo={setSelectedPathAlgo}
+        selectedGraphAlgo={selectedGraphAlgo}   setSelectedGraphAlgo={setSelectedGraphAlgo}
+        selectedSearchAlgo={selectedSearchAlgo} setSelectedSearchAlgo={setSelectedSearchAlgo}
+        showCode={showCode}                     setShowCode={setShowCode}
+        showChat={showChat}                     setShowChat={setShowChat}
       />
 
       <main className="pt-28 px-6 max-w-7xl mx-auto w-full flex-grow mb-10">
@@ -1010,7 +1145,7 @@ const Visualizer = () => {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
             {/* ══ MAIN PANEL ══ */}
-            <div className={`${isTG(activeAlgo)?"lg:col-span-2":"lg:col-span-3"} space-y-5`}>
+            <div className={`${(isTG(activeAlgo)||isSearchAlgo(activeAlgo))?"lg:col-span-2":"lg:col-span-3"} space-y-5`}>
               <div className="bg-[#0b0e17] rounded-[2rem] p-8 border border-slate-800/60 shadow-2xl">
 
                 <div className="flex flex-wrap justify-between items-center gap-3 mb-5">
@@ -1049,14 +1184,22 @@ const Visualizer = () => {
                   </div>
                 )}
 
+                {/* ── VISUALIZATION AREA ── */}
                 <div className="bg-slate-900/30 rounded-3xl border border-slate-800/40 p-6 flex items-center justify-center overflow-x-auto" style={{minHeight:"320px"}}>
-                  {isTG(activeAlgo) ? (
+                  {(isTG(activeAlgo)||isSearchAlgo(activeAlgo)) ? (
                     <div className="text-slate-600 text-sm text-center select-none">
-                      <p className="text-3xl mb-2">👉</p>
-                      <p className="text-slate-500">Interactive {isTreeAlgo(activeAlgo)?"Tree":"Graph"} editor is on the right →</p>
-                      <p className="text-xs mt-1 text-slate-700">Build your structure, then click Run.</p>
+                      <p className="text-3xl mb-2">{isSearchAlgo(activeAlgo)?"🔍":"👉"}</p>
+                      <p className="text-slate-500">
+                        {isSearchAlgo(activeAlgo)
+                          ? "Interactive Search visualizer is on the right →"
+                          : `Interactive ${isTreeAlgo(activeAlgo)?"Tree":"Graph"} editor is on the right →`}
+                      </p>
+                      <p className="text-xs mt-1 text-slate-700">
+                        {isSearchAlgo(activeAlgo) ? "Enter a target number and click Run." : "Build your structure, then click Run."}
+                      </p>
                     </div>
                   ) : selectedPathAlgo ? (
+                    /* ── DS DISPLAY ── */
                     <div className={`flex ${selectedPathAlgo==="Stack"?"flex-col-reverse items-center":"flex-row flex-wrap items-center"} py-4`}
                       style={{gap:isListType?"0":"12px"}}>
                       {dsData.length===0 ? (
@@ -1087,7 +1230,7 @@ const Visualizer = () => {
                                 {val}
                               </div>
                               <span className="mt-1.5 text-[10px] font-bold uppercase tracking-wider"
-                                style={{minHeight:"14px",color:isStackTop?"#fb923c":isQueueFront?"#34d399":isQueueRear?"#a78bfa":isDLL(selectedPathAlgo)&&isFirst?"#22d3ee":isDLL(selectedPathAlgo)&&isLast?"#fbbf24":"transparent",textShadow:isStackTop?"0 0 8px rgba(249,115,22,0.6)":(isQueueFront||isQueueRear)?"0 0 8px rgba(255,255,255,0.2)":isDLL(selectedPathAlgo)&&(isFirst||isLast)?"0 0 8px rgba(255,255,255,0.2)":"none"}}>
+                                style={{minHeight:"14px",color:isStackTop?"#fb923c":isQueueFront?"#34d399":isQueueRear?"#a78bfa":isDLL(selectedPathAlgo)&&isFirst?"#22d3ee":isDLL(selectedPathAlgo)&&isLast?"#fbbf24":"transparent"}}>
                                 {isStackTop?"▲ TOP":isQueueFront?"FRONT ▶":isQueueRear?"◀ REAR":isDLL(selectedPathAlgo)&&isFirst?"◆ HEAD":isDLL(selectedPathAlgo)&&isLast?"TAIL ◆":""}
                               </span>
                             </div>
@@ -1096,6 +1239,7 @@ const Visualizer = () => {
                       )}
                     </div>
                   ) : (
+                    /* ── SORTING BARS ── */
                     <div className="flex items-end justify-center gap-[3px] w-full" style={{height:"290px"}}>
                       {array.map((val,idx)=>{
                         const bgColor=getBarColor(idx),isPivot=pivotIndex===idx,isSwap=swappingIndices.includes(idx),isCmp=comparingIndices.includes(idx),isSortd=sortedIndices.includes(idx);
@@ -1117,28 +1261,33 @@ const Visualizer = () => {
                   </div>
                 )}
 
-                {selectedAlgo && <StepDetailPanel algo={selectedAlgo} steps={sortSteps}/>}
-                {selectedPathAlgo && <DSStepLog algo={selectedPathAlgo} log={dsLog}/>}
+                {selectedAlgo      && <StepDetailPanel algo={selectedAlgo}      steps={sortSteps}/>}
+                {selectedPathAlgo  && <DSStepLog       algo={selectedPathAlgo}  log={dsLog}/>}
+                {selectedSearchAlgo && <StepDetailPanel algo={selectedSearchAlgo} steps={[]}/>}
               </div>
             </div>
 
             {/* ══ SIDEBAR PANEL ══ */}
-            <div className={isTG(activeAlgo)?"lg:col-span-2":""}>
+            <div className={(isTG(activeAlgo)||isSearchAlgo(activeAlgo))?"lg:col-span-2":""}>
               <div className="bg-[#0b0e17] p-7 rounded-[2rem] border border-slate-800 shadow-2xl space-y-6 sticky top-28">
                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                  {isTG(activeAlgo)?(isTreeAlgo(activeAlgo)?"Tree Editor":"Graph Editor"):"Controls"}
+                  {isSearchAlgo(activeAlgo) ? "Search Controls"
+                    : isTG(activeAlgo) ? (isTreeAlgo(activeAlgo)?"Tree Editor":"Graph Editor")
+                    : "Controls"}
                 </h3>
 
-                {isTreeAlgo(activeAlgo) ? <TreeVisualizer algo={activeAlgo}/>
+                {isSearchAlgo(activeAlgo) ? <SearchVisualizer algo={activeAlgo}/>
+                : isTreeAlgo(activeAlgo)  ? <TreeVisualizer  algo={activeAlgo}/>
                 : isGraphAlgo(activeAlgo) ? <GraphVisualizer algo={activeAlgo}/>
 
                 : selectedPathAlgo ? (
+                  /* ── DS CONTROLS ── */
                   <div className="space-y-3">
-                    {selectedPathAlgo==="Stack"&&<input type="text" value={stackInput} onChange={e=>setStackInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleDSUpdate("add")} placeholder="Stack value…" className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm outline-none focus:border-orange-500 text-slate-200 placeholder-slate-600"/>}
-                    {selectedPathAlgo==="Queue"&&<input type="text" value={queueInput} onChange={e=>setQueueInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleDSUpdate("add")} placeholder="Queue value…" className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm outline-none focus:border-emerald-500 text-slate-200 placeholder-slate-600"/>}
-                    {selectedPathAlgo==="Linked List"&&<input type="text" value={llInput} onChange={e=>setLlInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleDSUpdate("add")} placeholder="Node value…" className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm outline-none focus:border-blue-500 text-slate-200 placeholder-slate-600"/>}
-                    {selectedPathAlgo==="Double Linked List"&&<input type="text" value={dllInput} onChange={e=>setDllInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleDSUpdate("add")} placeholder="DLL node value…" className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm outline-none focus:border-cyan-500 text-slate-200 placeholder-slate-600"/>}
-                    {isDLL(selectedPathAlgo)&&(
+                    {selectedPathAlgo==="Stack"           && <input type="text" value={stackInput} onChange={e=>setStackInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleDSUpdate("add")} placeholder="Stack value…"    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm outline-none focus:border-orange-500 text-slate-200 placeholder-slate-600"/>}
+                    {selectedPathAlgo==="Queue"           && <input type="text" value={queueInput} onChange={e=>setQueueInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleDSUpdate("add")} placeholder="Queue value…"    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm outline-none focus:border-emerald-500 text-slate-200 placeholder-slate-600"/>}
+                    {selectedPathAlgo==="Linked List"     && <input type="text" value={llInput}    onChange={e=>setLlInput(e.target.value)}    onKeyDown={e=>e.key==="Enter"&&handleDSUpdate("add")} placeholder="Node value…"    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm outline-none focus:border-blue-500 text-slate-200 placeholder-slate-600"/>}
+                    {selectedPathAlgo==="Double Linked List" && <input type="text" value={dllInput} onChange={e=>setDllInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleDSUpdate("add")} placeholder="DLL node value…" className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm outline-none focus:border-cyan-500 text-slate-200 placeholder-slate-600"/>}
+                    {isDLL(selectedPathAlgo) && (
                       <div className="bg-slate-900/60 rounded-xl p-3 border border-slate-700/40 space-y-1.5">
                         <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-2">Pointer Legend</p>
                         <div className="flex items-center gap-2 text-[11px] text-slate-400"><span style={{color:"#60a5fa",fontSize:"14px",fontWeight:"900"}}>→</span><span>next (blue)</span></div>
@@ -1155,41 +1304,25 @@ const Visualizer = () => {
                 ) : (
                   /* ── SORTING CONTROLS ── */
                   <div className="space-y-5">
-
-                    {/* ✅ NEW: Custom Array Input */}
                     <div className="bg-[#0f1320] rounded-2xl border border-slate-700/40 p-4 space-y-2">
                       <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold">নিজে Array দিন</p>
                       <p className="text-[10px] text-slate-600">Comma দিয়ে সংখ্যা লিখুন, যেমন: 45, 12, 78, 33</p>
-                      {/* input + button একই border-এ */}
-                      <div className={`flex items-center bg-slate-900 border rounded-xl overflow-hidden transition ${customInputErr ? "border-red-500/60" : "border-slate-700 focus-within:border-blue-500/70"}`}>
-                        <input
-                          type="text"
-                          value={customInput}
-                          onChange={e => { setCustomInput(e.target.value); setCustomInputErr(""); }}
-                          onKeyDown={e => e.key === "Enter" && applyCustomArray()}
-                          placeholder="45, 12, 78, 33, 5…"
-                          disabled={isSorting}
-                          className="flex-1 bg-transparent px-3 py-2.5 text-sm outline-none text-slate-200 placeholder-slate-600 disabled:opacity-40"
-                        />
-                        <button
-                          onClick={applyCustomArray}
-                          disabled={isSorting || !customInput.trim()}
-                          className="h-full px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-xs font-bold tracking-wide border-l border-slate-700 transition active:scale-95 flex-shrink-0"
-                        >
-                          Set
-                        </button>
+                      <div className={`flex items-center bg-slate-900 border rounded-xl overflow-hidden transition ${customInputErr?"border-red-500/60":"border-slate-700 focus-within:border-blue-500/70"}`}>
+                        <input type="text" value={customInput}
+                          onChange={e=>{setCustomInput(e.target.value);setCustomInputErr("");}}
+                          onKeyDown={e=>e.key==="Enter"&&applyCustomArray()}
+                          placeholder="45, 12, 78, 33, 5…" disabled={isSorting}
+                          className="flex-1 bg-transparent px-3 py-2.5 text-sm outline-none text-slate-200 placeholder-slate-600 disabled:opacity-40"/>
+                        <button onClick={applyCustomArray} disabled={isSorting||!customInput.trim()}
+                          className="h-full px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-xs font-bold tracking-wide border-l border-slate-700 transition active:scale-95 flex-shrink-0">Set</button>
                       </div>
-                      {customInputErr && (
-                        <p className="text-[11px] text-red-400">{customInputErr}</p>
-                      )}
-                      {useCustomArray && !customInputErr && (
-                        <p className="text-[11px] text-emerald-400">✓ Custom array set — {array.length}টি সংখ্যা</p>
-                      )}
+                      {customInputErr && <p className="text-[11px] text-red-400">{customInputErr}</p>}
+                      {useCustomArray && !customInputErr && <p className="text-[11px] text-emerald-400">✓ Custom array set — {array.length}টি সংখ্যা</p>}
                     </div>
 
-                    {!isSorting?(
+                    {!isSorting ? (
                       <button onClick={handleSort} className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-blue-900/30 transition active:scale-95"><Play size={18} fill="currentColor"/> Visualize</button>
-                    ):(
+                    ) : (
                       <button onClick={handleStop} className="w-full bg-red-600 hover:bg-red-500 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition active:scale-95"><span>■</span> Stop</button>
                     )}
                     <div className="space-y-2">
@@ -1198,11 +1331,10 @@ const Visualizer = () => {
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wide">
-                        <span>Array Size</span>
-                        <span>{useCustomArray ? `${array.length} (custom)` : arraySize}</span>
+                        <span>Array Size</span><span>{useCustomArray?`${array.length} (custom)`:arraySize}</span>
                       </div>
-                      <input type="range" min="5" max="30" value={useCustomArray ? array.length : arraySize}
-                        onChange={e=>{ setArraySize(Number(e.target.value)); setUseCustomArray(false); setCustomInput(""); }}
+                      <input type="range" min="5" max="30" value={useCustomArray?array.length:arraySize}
+                        onChange={e=>{setArraySize(Number(e.target.value));setUseCustomArray(false);setCustomInput("");}}
                         disabled={isSorting||useCustomArray}
                         className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-40"/>
                       {useCustomArray && <p className="text-[10px] text-slate-600">Custom array ব্যবহারে size slider disabled</p>}
@@ -1215,28 +1347,18 @@ const Visualizer = () => {
             </div>
 
           </div>
-        ):<Home/>}
+        ) : <Home/>}
       </main>
 
       {/* ════════ FLOATING CHATBOT ════════ */}
-      {/* Chat panel */}
-      <ChatBot isOpen={showChat} onClose={() => setShowChat(false)} activeAlgo={activeAlgo} />
-
-      {/* Floating bubble button */}
+      <ChatBot isOpen={showChat} onClose={()=>setShowChat(false)} activeAlgo={activeAlgo}/>
       <button
-        onClick={() => setShowChat(prev => !prev)}
-        className={`fixed bottom-6 right-6 z-[99] w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 active:scale-90
-          ${showChat
-            ? "bg-[#0f1320] border border-slate-600 text-slate-400"
-            : "bg-[#0f1320] border border-emerald-500/40 text-emerald-400 hover:border-emerald-400"
-          }`}
+        onClick={()=>setShowChat(prev=>!prev)}
+        className={`fixed bottom-6 right-6 z-[99] w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 active:scale-90 ${showChat?"bg-[#0f1320] border border-slate-600 text-slate-400":"bg-[#0f1320] border border-emerald-500/40 text-emerald-400 hover:border-emerald-400"}`}
         title="AI Assistant"
-        style={{ boxShadow: showChat ? "0 8px 32px rgba(0,0,0,0.5)" : "0 0 24px rgba(16,185,129,0.25), 0 8px 32px rgba(0,0,0,0.5)" }}
-      >
-        {showChat ? <X size={20} /> : <Bot size={22} />}
-        {!showChat && (
-          <span className="absolute inset-0 rounded-2xl border border-emerald-500/30 animate-ping opacity-30 pointer-events-none" />
-        )}
+        style={{boxShadow:showChat?"0 8px 32px rgba(0,0,0,0.5)":"0 0 24px rgba(16,185,129,0.25), 0 8px 32px rgba(0,0,0,0.5)"}}>
+        {showChat ? <X size={20}/> : <Bot size={22}/>}
+        {!showChat && <span className="absolute inset-0 rounded-2xl border border-emerald-500/30 animate-ping opacity-30 pointer-events-none"/>}
       </button>
 
       <style>{`
