@@ -30,3 +30,5 @@ Styling: Tailwind CSS
 Intelligence: Groq Cloud API
 Icons: Lucide React
 Animations: CSS3 Keyframes & Framer Motion.
+
+Visite live link: https://codevigo.codzzup.com/
