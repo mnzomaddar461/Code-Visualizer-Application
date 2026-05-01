@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { Zap, Code2, ChevronDown, Bot, Menu, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Zap, Code2, ChevronDown, Bot, Menu, X, BookOpen } from 'lucide-react';
 
 const Header = ({
-  selectedAlgo,        setSelectedAlgo,
-  selectedPathAlgo,    setSelectedPathAlgo,
-  selectedGraphAlgo,   setSelectedGraphAlgo,
-  selectedSearchAlgo,  setSelectedSearchAlgo,
-  showCode,            setShowCode,
-  showChat,            setShowChat,
+  selectedAlgo,         setSelectedAlgo,
+  selectedPathAlgo,     setSelectedPathAlgo,
+  selectedGraphAlgo,    setSelectedGraphAlgo,
+  selectedSearchAlgo,   setSelectedSearchAlgo,
+  showCode,             setShowCode,
+  showChat,             setShowChat,
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate(); // ✅ Using React Router's navigate hook
 
   const resetAll = () => {
     setSelectedAlgo("");
@@ -50,6 +52,14 @@ const Header = ({
     setMenuOpen(false);
   };
 
+  // ✅ Resources navigation handler
+  const handleResources = (val) => {
+    if (val) {
+      navigate(`/${val}`);
+      setMenuOpen(false);
+    }
+  };
+
   /* reusable select for mobile menu */
   const MobileSelect = ({ value, onChange, borderColor, hoverColor, focusColor, placeholder, chevronColor, children }) => (
     <div className="relative group w-full">
@@ -74,7 +84,11 @@ const Header = ({
         {/* Logo */}
         <div
           className="flex items-center gap-3 cursor-pointer group flex-shrink-0"
-          onClick={() => { resetAll(); setMenuOpen(false); }}
+          onClick={() => { 
+            resetAll(); 
+            setMenuOpen(false); 
+            navigate('/');  // ✅ Navigate to home
+          }}
         >
           <div className="p-2.5 bg-blue-500/10 rounded-xl border border-blue-500/20 group-hover:scale-110 transition-transform duration-300">
             <Zap size={22} className="text-blue-500" />
@@ -97,7 +111,7 @@ const Header = ({
             <select
               value={selectedAlgo}
               onChange={e => handleSorting(e.target.value)}
-              className="appearance-none bg-slate-900/80 border border-slate-700/50 px-4 py-2.5 pr-9 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-300 hover:border-blue-500/40 transition-all focus:border-blue-500/50 min-w-[140px]"
+              className="appearance-none bg-slate-900/80 border border-slate-700/50 px-4 py-2.5 pr-9 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-300 hover:border-blue-500/40 transition-all focus:border-blue-500/50 min-w-[120px]"
             >
               <option value="" disabled hidden>Sorting</option>
               <option value="Bubble Sort">Bubble Sort</option>
@@ -114,7 +128,7 @@ const Header = ({
             <select
               value={selectedSearchAlgo}
               onChange={e => handleSearching(e.target.value)}
-              className="appearance-none bg-slate-900/80 border border-amber-700/40 px-4 py-2.5 pr-9 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-300 hover:border-amber-500/60 transition-all focus:border-amber-500/70 min-w-[148px]"
+              className="appearance-none bg-slate-900/80 border border-amber-700/40 px-4 py-2.5 pr-9 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-300 hover:border-amber-500/60 transition-all focus:border-amber-500/70 min-w-[120px]"
             >
               <option value="" disabled hidden>Searching</option>
               <option value="Linear Search">Linear Search</option>
@@ -131,7 +145,7 @@ const Header = ({
             <select
               value={selectedPathAlgo}
               onChange={e => handleDS(e.target.value)}
-              className="appearance-none bg-slate-900/80 border border-slate-700/50 px-4 py-2.5 pr-9 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-300 hover:border-green-500/40 transition-all focus:border-green-500/50 min-w-[148px]"
+              className="appearance-none bg-slate-900/80 border border-slate-700/50 px-4 py-2.5 pr-9 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-300 hover:border-green-500/40 transition-all focus:border-green-500/50 min-w-[130px]"
             >
               <option value="" disabled hidden>Data Structure</option>
               <option value="Stack">Stack (LIFO)</option>
@@ -147,17 +161,37 @@ const Header = ({
             <select
               value={selectedGraphAlgo}
               onChange={e => handleGraph(e.target.value)}
-              className="appearance-none bg-slate-900/80 border border-purple-700/40 px-4 py-2.5 pr-9 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-300 hover:border-purple-500/60 transition-all focus:border-purple-500/70 min-w-[160px]"
+              className="appearance-none bg-slate-900/80 border border-purple-700/40 px-4 py-2.5 pr-9 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-300 hover:border-purple-500/60 transition-all focus:border-purple-500/70 min-w-[130px]"
             >
               <option value="" disabled hidden>Tree / Graph</option>
               <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── Tree ──</option>
-              <option value="Tree BFS">  Tree BFS (Level Order)</option>
-              <option value="Tree DFS">  Tree DFS (Pre-order)</option>
+              <option value="Tree BFS">  Tree BFS</option>
+              <option value="Tree DFS">  Tree DFS</option>
               <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── Graph ──</option>
               <option value="Graph BFS">  Graph BFS</option>
               <option value="Graph DFS">  Graph DFS</option>
             </select>
             <ChevronDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none group-hover:text-purple-500" />
+          </div>
+
+          {/* ── Resources Dropdown ── */}
+          <div className="relative group">
+            <select
+              value=""
+              onChange={e => {
+                if (e.target.value) {
+                  handleResources(e.target.value);
+                  e.target.value = "";
+                }
+              }}
+              className="appearance-none bg-blue-500/10 border border-blue-500/30 px-4 py-2.5 pr-9 rounded-xl text-xs font-bold outline-none cursor-pointer text-blue-400 hover:bg-blue-500/20 transition-all focus:border-blue-500 min-w-[125px]"
+            >
+              <option value="" disabled hidden>Resources</option>
+              <option value="leetcode-150" className="bg-[#060913] text-white">LeetCode Problems</option>
+              <option value="c-roadmap" className="bg-[#060913] text-white">C Roadmap</option>
+              <option value="cpp-roadmap" className="bg-[#060913] text-white">C++ Roadmap</option>
+            </select>
+            <BookOpen size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 pointer-events-none" />
           </div>
 
           {/* Code toggle */}
@@ -220,7 +254,26 @@ const Header = ({
 
       {/* ── Mobile dropdown menu ── */}
       {menuOpen && (
-        <div className="lg:hidden border-t border-slate-800/60 bg-[#060913]/98 px-4 py-5 space-y-4">
+        <div className="lg:hidden border-t border-slate-800/60 bg-[#060913]/98 px-4 py-5 space-y-4 max-h-[80vh] overflow-y-auto">
+
+          <div>
+            <p className="text-[9px] uppercase tracking-widest text-blue-400 font-bold mb-1.5 px-1">Learning Resources</p>
+            <MobileSelect
+              value=""
+              onChange={(val) => {
+                if (val) {
+                  handleResources(val);
+                }
+              }}
+              borderColor="border-blue-500/30" hoverColor="hover:border-blue-500/50"
+              focusColor="focus:border-blue-500" placeholder="Resources"
+              chevronColor="text-blue-500"
+            >
+              <option value="leetcode-150">LeetCode Problems</option>
+              <option value="c-roadmap">C Roadmap</option>
+              <option value="cpp-roadmap">C++ Roadmap</option>
+            </MobileSelect>
+          </div>
 
           <div>
             <p className="text-[9px] uppercase tracking-widest text-slate-600 font-bold mb-1.5 px-1">Sorting</p>
@@ -278,8 +331,8 @@ const Header = ({
               chevronColor="group-hover:text-purple-500"
             >
               <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── Tree ──</option>
-              <option value="Tree BFS">Tree BFS (Level Order)</option>
-              <option value="Tree DFS">Tree DFS (Pre-order)</option>
+              <option value="Tree BFS">Tree BFS</option>
+              <option value="Tree DFS">Tree DFS</option>
               <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── Graph ──</option>
               <option value="Graph BFS">Graph BFS</option>
               <option value="Graph DFS">Graph DFS</option>

@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Header from './header';
 import Home from './home';
 import Footer from './Footer';
+import LeetCode from './leedcode';
+import Roadmap from './Roadmap';
+import { C_CHAPTERS } from './cRoadmap';
+import { CPP_CHAPTERS } from './cppRoadmap';
 import {
   Play, RotateCcw, Plus, Trash2, RefreshCw,
   Code2, Pin, ArrowRightLeft, SquareCheck, GitCompare,
@@ -945,6 +949,7 @@ const isSearchAlgo = (a) => ["Linear Search","Binary Search","Jump Search","Fibo
   MAIN COMPONENT
 ════════════════════════════════════════════════════════════ */
 const Visualizer = () => {
+  const [activePage,         setActivePage]         = useState("visualizer");
   const [selectedAlgo,       setSelectedAlgo]       = useState("");
   const [selectedPathAlgo,   setSelectedPathAlgo]   = useState("");
   const [selectedGraphAlgo,  setSelectedGraphAlgo]  = useState("");
@@ -1138,9 +1143,15 @@ const Visualizer = () => {
         selectedSearchAlgo={selectedSearchAlgo} setSelectedSearchAlgo={setSelectedSearchAlgo}
         showCode={showCode}                     setShowCode={setShowCode}
         showChat={showChat}                     setShowChat={setShowChat}
+        activePage={activePage}                 setActivePage={setActivePage}
       />
 
-      <main className="pt-28 px-6 max-w-7xl mx-auto w-full flex-grow mb-10">
+      {/* ── Page routing ── */}
+      {activePage === "leetcode" && <LeetCode/>}
+      {activePage === "c"        && <Roadmap chapters={C_CHAPTERS}   accentColor="blue"   title="C Programming" subtitle="C language এর basics থেকে advanced পর্যন্ত — beginners দের জন্য।"   icon="🔵"/>}
+      {activePage === "cpp"      && <Roadmap chapters={CPP_CHAPTERS} accentColor="purple" title="C++ Programming" subtitle="C++ এর OOP, STL, Templates সহ সম্পূর্ণ roadmap।" icon="🟣"/>}
+
+      {activePage === "visualizer" && <main className="pt-28 px-6 max-w-7xl mx-auto w-full flex-grow mb-10">
         {activeAlgo ? (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
@@ -1348,7 +1359,7 @@ const Visualizer = () => {
 
           </div>
         ) : <Home/>}
-      </main>
+      </main>}
 
       {/* ════════ FLOATING CHATBOT ════════ */}
       <ChatBot isOpen={showChat} onClose={()=>setShowChat(false)} activeAlgo={activeAlgo}/>
