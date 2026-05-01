@@ -1381,7 +1381,7 @@ const Visualizer = () => {
         ::-webkit-scrollbar-track{background:transparent;}
         ::-webkit-scrollbar-thumb{background:#334155;border-radius:4px;}
       `}</style>
-      <Footer/>
+      {/* <Footer/> */}
     </div>
   );
 };

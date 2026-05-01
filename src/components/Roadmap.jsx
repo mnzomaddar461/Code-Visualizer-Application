@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import { CheckCircle, ChevronRight, BookOpen, HelpCircle, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle, ChevronRight, BookOpen, RotateCcw, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 /* ══════════════════════════════════════════════
-  Shared Roadmap component — used for C and C++
-  Props:
-    chapters  — array of chapter objects
-    accentColor — tailwind color token e.g. "blue" | "purple"
-    title     — "C Programming" | "C++"
-    subtitle  — tagline
-    icon      — emoji
+  Shared Roadmap — C and C++
+  Props: chapters, accentColor, title, subtitle, icon
 ══════════════════════════════════════════════ */
 
 const ACCENT = {
@@ -36,7 +32,7 @@ const ACCENT = {
   },
 };
 
-/* Renders markdown-ish code blocks simply */
+/* ── Theory block renderer ── */
 const TheoryBlock = ({ text }) => {
   const parts = text.trim().split(/(```[\s\S]*?```)/g);
   return (
@@ -54,12 +50,12 @@ const TheoryBlock = ({ text }) => {
           <div key={i} className="space-y-1">
             {part.trim().split("\n").map((line, j) => {
               if (line.startsWith("**") && line.endsWith("**"))
-                return <p key={j} className="font-bold text-slate-200 mt-3">{line.replace(/\*\*/g,"")}</p>;
+                return <p key={j} className="font-bold text-slate-200 mt-3">{line.replace(/\*\*/g, "")}</p>;
               if (line.startsWith("- "))
                 return <p key={j} className="ml-4 before:content-['•'] before:mr-2 before:text-slate-600">{line.slice(2)}</p>;
               if (line.startsWith("⚠️"))
                 return <p key={j} className="bg-amber-900/20 border border-amber-700/30 rounded-lg px-3 py-2 text-amber-400 text-[12px]">{line}</p>;
-              if (line.trim() === "") return <div key={j} className="h-1"/>;
+              if (line.trim() === "") return <div key={j} className="h-1" />;
               return <p key={j}>{line}</p>;
             })}
           </div>
@@ -69,24 +65,18 @@ const TheoryBlock = ({ text }) => {
   );
 };
 
-/* Quiz for one chapter */
+/* ── Quiz ── */
 const QuizSection = ({ quiz, ac }) => {
-  const [answers, setAnswers]   = useState({});
+  const [answers,   setAnswers]   = useState({});
   const [submitted, setSubmitted] = useState(false);
-  const [score, setScore]       = useState(0);
+  const [score,     setScore]     = useState(0);
 
-  const select = (qi, oi) => {
-    if (submitted) return;
-    setAnswers(prev => ({ ...prev, [qi]: oi }));
-  };
-
+  const select = (qi, oi) => { if (!submitted) setAnswers(p => ({ ...p, [qi]: oi })); };
   const submit = () => {
     let s = 0;
     quiz.forEach((q, qi) => { if (answers[qi] === q.ans) s++; });
-    setScore(s);
-    setSubmitted(true);
+    setScore(s); setSubmitted(true);
   };
-
   const reset = () => { setAnswers({}); setSubmitted(false); setScore(0); };
 
   return (
@@ -94,7 +84,7 @@ const QuizSection = ({ quiz, ac }) => {
       {quiz.map((q, qi) => (
         <div key={qi} className="space-y-2">
           <p className="text-[13px] font-semibold text-slate-300">
-            <span className="text-slate-600 font-mono mr-2">{qi+1}.</span>{q.q}
+            <span className="text-slate-600 font-mono mr-2">{qi + 1}.</span>{q.q}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {q.options.map((opt, oi) => {
@@ -109,10 +99,8 @@ const QuizSection = ({ quiz, ac }) => {
                     isSelected ? `bg-slate-700/60 ${ac.ring} border text-white` :
                     "bg-slate-900/50 border-slate-700/50 text-slate-400 hover:border-slate-500 hover:text-slate-300"
                   }`}>
-                  <span className="font-mono text-[10px] mr-2 text-slate-600">{String.fromCharCode(65+oi)}.</span>
-                  {opt}
-                  {isCorrect && " ✓"}
-                  {isWrong   && " ✗"}
+                  <span className="font-mono text-[10px] mr-2 text-slate-600">{String.fromCharCode(65 + oi)}.</span>
+                  {opt}{isCorrect && " ✓"}{isWrong && " ✗"}
                 </button>
               );
             })}
@@ -121,8 +109,7 @@ const QuizSection = ({ quiz, ac }) => {
       ))}
 
       {!submitted ? (
-        <button onClick={submit}
-          disabled={Object.keys(answers).length < quiz.length}
+        <button onClick={submit} disabled={Object.keys(answers).length < quiz.length}
           className={`w-full py-3 rounded-2xl font-bold text-sm text-white shadow-lg transition active:scale-95 disabled:opacity-40 ${ac.btn}`}>
           Submit Quiz
         </button>
@@ -130,17 +117,17 @@ const QuizSection = ({ quiz, ac }) => {
         <div className="space-y-3">
           <div className={`rounded-2xl p-4 text-center border ${
             score === quiz.length ? "bg-green-900/30 border-green-500/30 text-green-400" :
-            score >= quiz.length/2 ? "bg-amber-900/30 border-amber-500/30 text-amber-400" :
+            score >= quiz.length / 2 ? "bg-amber-900/30 border-amber-500/30 text-amber-400" :
             "bg-red-900/30 border-red-500/30 text-red-400"
           }`}>
             <p className="text-2xl font-extrabold">{score}/{quiz.length}</p>
             <p className="text-[11px] mt-1 uppercase tracking-widest">
-              {score === quiz.length ? "🎉 Perfect!" : score >= quiz.length/2 ? "👍 Good job!" : "📖 Review again"}
+              {score === quiz.length ? "🎉 Perfect!" : score >= quiz.length / 2 ? "👍 Good job!" : "📖 Review again"}
             </p>
           </div>
           <button onClick={reset}
             className="w-full border border-slate-700 py-2.5 rounded-xl text-slate-500 hover:bg-slate-800 text-sm font-bold flex items-center justify-center gap-2 transition">
-            <RotateCcw size={13}/> Retry Quiz
+            <RotateCcw size={13} /> Retry Quiz
           </button>
         </div>
       )}
@@ -148,49 +135,36 @@ const QuizSection = ({ quiz, ac }) => {
   );
 };
 
-/* Single Chapter Card */
+/* ── Chapter Card ── */
 const ChapterCard = ({ chapter, index, ac, completedSet, markComplete }) => {
   const [open, setOpen] = useState(false);
-  const [tab, setTab]   = useState("theory");
+  const [tab,  setTab]  = useState("theory");
   const isCompleted = completedSet.has(chapter.id);
 
   return (
-    <div className={`bg-[#0b0e17] rounded-2xl border transition-all duration-300 ${
-      isCompleted ? `${ac.ring} ${ac.glow}` : "border-slate-800/60"
-    }`}>
-      {/* Header row */}
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center gap-4 px-5 py-4 text-left"
-      >
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0 border ${
-          isCompleted ? "bg-green-900/30 border-green-500/30" : "bg-slate-800/60 border-slate-700/40"
-        }`}>
+    <div className={`bg-[#0b0e17] rounded-2xl border transition-all duration-300 ${isCompleted ? `${ac.ring} ${ac.glow}` : "border-slate-800/60"}`}>
+      <button onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-4 px-5 py-4 text-left">
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0 border ${isCompleted ? "bg-green-900/30 border-green-500/30" : "bg-slate-800/60 border-slate-700/40"}`}>
           {isCompleted ? "✅" : chapter.icon}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono text-slate-600">Chapter {String(index+1).padStart(2,"0")}</span>
+            <span className="text-[10px] font-mono text-slate-600">Chapter {String(index + 1).padStart(2, "0")}</span>
             {isCompleted && <span className="text-[10px] text-green-400 font-bold">Completed</span>}
           </div>
           <p className="text-sm font-bold text-slate-200 leading-tight">{chapter.title}</p>
           <p className="text-[11px] text-slate-600 mt-0.5 truncate">{chapter.description}</p>
         </div>
-        {open
-          ? <ChevronUp size={16} className={ac.chevron}/>
-          : <ChevronRight size={16} className="text-slate-600"/>}
+        {open ? <ChevronUp size={16} className={ac.chevron} /> : <ChevronRight size={16} className="text-slate-600" />}
       </button>
 
-      {/* Expanded content */}
       {open && (
         <div className="px-5 pb-5 border-t border-slate-800/40">
-          {/* Tabs */}
           <div className="flex gap-1 mt-4 mb-4 bg-slate-900/50 rounded-xl p-1">
-            {[["theory","📖 Theory"],["quiz","🧪 Quiz"]].map(([key, label]) => (
+            {[["theory", "📖 Theory"], ["quiz", "🧪 Quiz"]].map(([key, label]) => (
               <button key={key} onClick={() => setTab(key)}
-                className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
-                  tab === key ? "bg-slate-700 text-white" : "text-slate-500 hover:text-slate-300"
-                }`}>
+                className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${tab === key ? "bg-slate-700 text-white" : "text-slate-500 hover:text-slate-300"}`}>
                 {label}
               </button>
             ))}
@@ -198,36 +172,57 @@ const ChapterCard = ({ chapter, index, ac, completedSet, markComplete }) => {
 
           {tab === "theory" && (
             <div className="space-y-4">
-              <TheoryBlock text={chapter.theory}/>
-              <button
-                onClick={() => markComplete(chapter.id)}
-                disabled={isCompleted}
+              <TheoryBlock text={chapter.theory} />
+              <button onClick={() => markComplete(chapter.id)} disabled={isCompleted}
                 className={`w-full py-3 rounded-2xl font-bold text-sm shadow-lg transition active:scale-95 disabled:opacity-60 text-white ${ac.btn}`}>
                 {isCompleted ? "✅ Completed!" : "Mark as Complete"}
               </button>
             </div>
           )}
 
-          {tab === "quiz" && <QuizSection quiz={chapter.quiz} ac={ac}/>}
+          {tab === "quiz" && <QuizSection quiz={chapter.quiz} ac={ac} />}
         </div>
       )}
     </div>
   );
 };
 
-/* Main Roadmap Component */
+/* ══════════════════════════════════════════════
+   MAIN ROADMAP COMPONENT
+══════════════════════════════════════════════ */
 const Roadmap = ({ chapters, accentColor, title, subtitle, icon }) => {
+  const navigate   = useNavigate();
   const [completed, setCompleted] = useState(new Set());
-  const ac = ACCENT[accentColor] ?? ACCENT.blue;
-  const pct = Math.round((completed.size / chapters.length) * 100);
+  const ac  = ACCENT[accentColor] ?? ACCENT.blue;
+  const pct = chapters.length > 0 ? Math.round((completed.size / chapters.length) * 100) : 0;
 
   const markComplete = (id) => setCompleted(prev => new Set([...prev, id]));
 
+  /* ── Safety: if chapters is empty or not array ── */
+  if (!Array.isArray(chapters) || chapters.length === 0) {
+    return (
+      <div className="min-h-screen bg-[#060913] text-slate-200 pt-24 pb-16 px-4 flex flex-col items-center justify-center gap-4">
+        <p className="text-slate-500 text-lg">📭 No chapters found for this roadmap.</p>
+        <button onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-slate-400 hover:text-white transition text-sm font-semibold">
+          <ArrowLeft size={16} /> Go Back
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#060913] text-slate-200 pt-28 pb-16 px-4 sm:px-6">
+    <div className="min-h-screen bg-[#060913] text-slate-200 pt-24 pb-16 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
 
-        {/* Hero */}
+        {/* ── Back button ── */}
+        <button onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-slate-500 hover:text-slate-200 text-sm font-semibold mb-6 transition-colors group">
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Visualizer
+        </button>
+
+        {/* ── Hero ── */}
         <div className="text-center mb-10">
           <div className={`inline-flex items-center gap-2 border px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4 ${ac.badge}`}>
             {icon} {title}
@@ -244,16 +239,16 @@ const Roadmap = ({ chapters, accentColor, title, subtitle, icon }) => {
               <span>{completed.size}/{chapters.length} chapters</span>
             </div>
             <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-              <div className={`h-full rounded-full transition-all duration-500 ${ac.progress}`} style={{width:`${pct}%`}}/>
+              <div className={`h-full rounded-full transition-all duration-500 ${ac.progress}`} style={{ width: `${pct}%` }} />
             </div>
-            <p className={`text-2xl font-extrabold mt-2 ${pct===100?"text-green-400":""}`}>
+            <p className={`text-2xl font-extrabold mt-2 ${pct === 100 ? "text-green-400" : ""}`}>
               {pct}%
               {pct === 100 && <span className="text-base font-normal text-green-400 ml-2">🎉 Completed!</span>}
             </p>
           </div>
         </div>
 
-        {/* Chapter list */}
+        {/* ── Chapters ── */}
         <div className="space-y-4">
           {chapters.map((ch, i) => (
             <ChapterCard

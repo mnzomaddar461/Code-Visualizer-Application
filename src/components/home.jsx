@@ -1,6 +1,10 @@
 import React from 'react';
 import { Zap, BarChart3, Binary, GitGraph, TreePalm, GitGraphIcon, Trees, AlertOctagonIcon, LeafyGreen, SearchAlertIcon, SearchCode } from 'lucide-react';
 import { Link } from "react-router-dom";
+import LeetCode from './leedcode';
+import { Puzzle } from 'lucide-react';
+// import { Cpu } from 'lucide-react';
+// import { Zap } from 'lucide-react';
 
 // সর্টিং এবং পাথফাইন্ডিং আইকনগুলোর জন্য কালার কনফিগ
 const iconStyles = {
@@ -27,8 +31,42 @@ const iconStyles = {
     border: "border-red-500/20",
     hover: "hover:border-red-500/50",
     text: "text-red-400"
+  },
+    yellow: {
+    bg: "bg-yellow-500/10",
+    border: "border-yellow-500/20",
+    hover: "hover:border-yellow-500/50",
+    text: "text-yellow-400"
+  },
+    orange: {
+    bg: "bg-orange-500/10",
+    border: "border-orange-500/20",
+    hover: "hover:border-orange-500/50",
+    text: "text-orange-400"
+  },
+    pink: {
+    bg: "bg-pink-500/10",
+    border: "border-pink-500/20",
+    hover: "hover:border-pink-500/50",
+    text: "text-pink-400"
   }
 };
+
+// C Language Official Icon (SVG)
+const CIcon = () => (
+  <svg viewBox="0 0 128 128" width="40" height="40">
+    <path fill="#FC427B" d="M115 16.3c-2.3-4-5.4-7.4-9.2-9.8C101.9 4 97.4 2.5 92.7 2.5H35.3c-4.7 0-9.2 1.5-13.1 3.9-3.8 2.4-6.9 5.8-9.2 9.8L6.6 30.1C4.3 34 3 38.6 3 43.4v41.2c0 4.8 1.3 9.4 3.6 13.3l6.4 11.1c2.3 4 5.4 7.4 9.2 9.8 3.9 2.5 8.4 3.9 13.1 3.9h57.4c4.7 0 9.2-1.5 13.1-3.9 3.8-2.4 6.9-5.8 9.2-9.8l6.4-11.1c2.3-4 3.6-8.5 3.6-13.3V43.4c0-4.8-1.3-9.4-3.6-13.3L115 16.3z"/>
+    <path fill="#fff" d="M64 28.9C45.2 28.9 29.9 44.2 29.9 63s15.3 34.1 34.1 34.1c11.3 0 21.3-5.5 27.4-14l-9.8-5.6c-3.9 5.6-10.3 9.3-17.6 9.3-11.7 0-21.2-9.5-21.2-21.2 0-11.7 9.5-21.2 21.2-21.2 7.4 0 13.8 3.8 17.6 9.5l9.8-5.6C85.3 34.5 75.3 28.9 64 28.9z"/>
+  </svg>
+);
+
+// C++ Language Official Icon (SVG)
+const CppIcon = () => (
+  <svg viewBox="0 0 128 128" width="40" height="40">
+    <path fill="#F97F51" d="M115 16.3c-2.3-4-5.4-7.4-9.2-9.8C101.9 4 97.4 2.5 92.7 2.5H35.3c-4.7 0-9.2 1.5-13.1 3.9-3.8 2.4-6.9 5.8-9.2 9.8L6.6 30.1C4.3 34 3 38.6 3 43.4v41.2c0 4.8 1.3 9.4 3.6 13.3l6.4 11.1c2.3 4 5.4 7.4 9.2 9.8 3.9 2.5 8.4 3.9 13.1 3.9h57.4c4.7 0 9.2-1.5 13.1-3.9 3.8-2.4 6.9-5.8 9.2-9.8l6.4-11.1c2.3-4 3.6-8.5 3.6-13.3V43.4c0-4.8-1.3-9.4-3.6-13.3L115 16.3z"/>
+    <path fill="#fff" d="M64 28.9C45.2 28.9 29.9 44.2 29.9 63s15.3 34.1 34.1 34.1c11.3 0 21.3-5.5 27.4-14l-9.8-5.6c-3.9 5.6-10.3 9.3-17.6 9.3-11.7 0-21.2-9.5-21.2-21.2 0-11.7 9.5-21.2 21.2-21.2 7.4 0 13.8 3.8 17.6 9.5l9.8-5.6C85.3 34.5 75.3 28.9 64 28.9zM91 58h-5v-5h-5v5h-5v5h5v5h5v-5h5zM109 58h-5v-5h-5v5h-5v5h5v5h5v-5h5z"/>
+  </svg>
+);
 
 const floatingSnippets = [
   { code: `for(let i=0;i<n;i++){\n  swap(arr,i,j);\n}`, r: "-8deg", d: "18s", delay: "0s", o: 0.25, left: "2%", color: "#60a5fa" }, 
@@ -133,14 +171,30 @@ const Home = () => {
               desc="Master complex traversals like BFS and DFS by visualizing dynamic nodes and edge connections in real-time."
               color="green"
             />
-          {/* <div className="md:col-span-2">
+          <div className="md:col-span-2">
             <HomeCard 
-              icon={<GitGraphIcon size={32} />}
-              title="Graph and Tree"
-              desc="Master complex traversals like BFS and DFS by visualizing dynamic nodes and edge connections in real-time."
-              color="green"
+              icon={<Puzzle size={32} />}
+              title="LeetCode 100 problems"
+              desc="Conquer the top 100 most popular coding problems. Master core data structures and algorithms to ace your next technical interview."
+              color="yellow"
             />
-          </div> */}
+          </div>
+          <div className="md:col-span-2">
+            <HomeCard 
+              icon={<CIcon />}
+              title="C Programming Language 0 to Hero! "
+              desc="Build a rock-solid foundation in logic building. Learn pointers, memory allocation, and efficient algorithms from scratch."
+              color="pink"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <HomeCard 
+              icon={<CppIcon />}
+              title="C++ Programming Language 0 to Hero!"
+              desc="Master the power of C++ from scratch. Dive deep into Object-Oriented Programming, Memory Management, and the Standard Template Library (STL)."
+              color="orange"
+            />
+          </div>
         </div>
       </div>
     </div>
