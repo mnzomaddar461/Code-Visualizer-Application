@@ -1,34 +1,42 @@
-AlgoViz Engine: High-Performance Code Visualizer
-AlgoViz Engine is a cutting-edge, interactive platform built for developers and students to master Data Structures and Algorithms. Unlike traditional visualizers, it integrates Groq's LPU™ technology to provide lightning-fast AI assistance, making algorithm learning an intuitive and intelligent experience.
+AlgoViz Engine: The Next Evolution of Code Visualization
+AlgoViz Engine is a high-performance, interactive ecosystem designed for developers and students to dismantle the complexity of Data Structures and Algorithms (DSA). By leveraging Groq's LPU™ technology, AlgoViz provides near-instant AI insights, transforming abstract logic into a tangible, intelligent visual experience.
 
-What's Inside?
-1. 📊 Sorting Arena
-Witness the elegance of O(n log n) efficiency through real-time, fluid animations.
-Algorithms: Merge Sort, Quick Sort, Bubble Sort, Selection Sort, and more.
-Visual Feedback: Color-coded comparisons and swaps to track the flow of data.
+1.Sorting ArenaWitness the mathematical elegance of efficiency through fluid, real-time animations.Algorithms: Merge Sort, Quick Sort, Bubble Sort, Selection Sort, and more.Visual Feedback: Dynamic color-coded markers track comparisons, pivots, and swaps to demystify $O(n \log n)$ performance.
 
-2. 🧠 Data Structure Playground
-Deep dive into how memory and data are managed in real-time.
-Linear DS: Interactive Stack, Queue, and Linked List implementations.
-Visual Manipulation: Push, Pop, Enqueue, and Dequeue with immediate visual response.
+2.Data Structure PlaygroundVisualize memory management and pointer manipulation as they happen.Linear DS: Interactive Stack, Queue, and Linked List environments.Live Manipulation: Execute Push, Pop, Enqueue, and Dequeue operations with immediate graphical state changes.
 
-3. 🌳 Graph & Tree Explorer
-Visualize complex non-linear traversals with dynamic node connections.
-Traversals: Breadth-First Search (BFS) and Depth-First Search (DFS).
-Logic: Understand edge connections and node states during discovery.
+3.Graph & Tree ExplorerMaster non-linear traversals by observing how nodes "discover" their neighbors.Traversals: Step-by-step Breadth-First Search (BFS) and Depth-First Search (DFS).Logic Mapping: Real-time highlighting of edge connections and node states (Visited vs. Unvisited).
 
-4. 🤖 AI Tutor (Powered by Groq)
-The crown jewel of the project. I have integrated Groq's API to provide near-instant responses.
+4.AI Tutor (Powered by Groq)The engine's brain. Integrated with Groq's API for the world's fastest AI inference.Instant Clarity: Query complex Big O notation or specific logic bottlenecks.Zero Lag: Experience ultra-low latency responses that keep you in the "flow state" of learning.
+---------------------------------------------------------------------
+---                          New Features                         ---
+---------------------------------------------------------------------
+5. 🧩 LeetCode Integrated Lab
+Bridge the gap between visualization and competitive programming.
 
-Instant Clarity: Ask anything about Big O notation or logic flow.
+Problem Mapping: Select popular LeetCode problems and watch the visualizer solve them step-by-step.
 
-Ultra-Low Latency: Experience the world's fastest AI inference directly in your learning environment.
+Pattern Recognition: Visual representations of Two-Pointer, Sliding Window, and Backtracking techniques.
 
-Built With
+6. 🛡️ C Programming Foundations
+Master the "low-level" logic that powers modern software.
+
+Pointer Visualization: See exactly how addresses and values interact in memory.
+
+Memory Management: Visual representations of the Stack vs. the Heap, and how malloc and free actually operate.
+
+7. 🛠️ C++ Power User Suite
+Explore the complexity of Object-Oriented Programming and the STL.
+
+STL Visualizer: Interact with std::vector, std::map, and std::set to understand their underlying structural logic.
+
+Class Architecture: Visual diagrams of Inheritance, Polymorphism, and Constructor/Destructor sequences.
+
+Tech Stack
 Framework: React.js (Vite)
 Styling: Tailwind CSS
-Intelligence: Groq Cloud API
+Intelligence: Groq Cloud API (LPU™ Inference)
 Icons: Lucide React
-Animations: CSS3 Keyframes & Framer Motion.
+Animations: CSS3 Keyframes & Framer Motion
 
-Visite live link: https://codevigo.codzzup.com/
+Live Link: https://codevigo.codzzup.com/
