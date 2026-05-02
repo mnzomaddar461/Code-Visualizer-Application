@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Zap, Code2, ChevronDown, Bot, Menu, X, BookOpen } from 'lucide-react';
+import { Zap, Code2, ChevronDown, Bot, Menu, X, BookOpen, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Sun, Moon } from 'lucide-react';
 import { useTheme } from './ThemeContext';
 
 const Header = ({
@@ -14,6 +13,7 @@ const Header = ({
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { isDark, setIsDark } = useTheme(); // ✅ Theme toggle
 
   const resetAll = () => {
     setSelectedAlgo(""); setSelectedPathAlgo("");
@@ -28,13 +28,11 @@ const Header = ({
   const handleResources = (val) => {
     if (!val) return;
     setMenuOpen(false);
-    /* App.jsx এর route এর সাথে মিলিয়ে দেওয়া হয়েছে */
     if      (val === "leetcode-150") navigate("/leetcode-150");
     else if (val === "c-roadmap")    navigate("/c-roadmap");
     else if (val === "cpp-roadmap")  navigate("/cpp-roadmap");
   };
 
-  /* ── Reusable selects ── */
   const DesktopSelect = ({ value, onChange, borderCls, hoverCls, focusCls, chevronCls, placeholder, minW = "min-w-[110px]", children }) => (
     <div className="relative group flex-shrink-0">
       <select value={value} onChange={e => onChange(e.target.value)}
@@ -55,6 +53,21 @@ const Header = ({
       </select>
       <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
     </div>
+  );
+
+  // ✅ Reusable theme toggle button
+  const ThemeBtn = ({ size = 17 }) => (
+    <button
+      onClick={() => setIsDark(!isDark)}
+      className={`p-2 rounded-xl border transition-all duration-300 flex-shrink-0 ${
+        isDark
+          ? "bg-slate-800/60 border-slate-700 text-slate-400 hover:text-yellow-400 hover:border-yellow-500/50"
+          : "bg-yellow-500/10 border-yellow-500/30 text-yellow-500 hover:bg-yellow-500/20"
+      }`}
+      title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+    >
+      {isDark ? <Sun size={size} /> : <Moon size={size} />}
+    </button>
   );
 
   return (
@@ -139,6 +152,9 @@ const Header = ({
 
           <div className="w-px h-6 bg-slate-700/50 mx-0.5" />
 
+          {/* ✅ Theme Toggle — Desktop */}
+          <ThemeBtn size={17} />
+
           <button onClick={() => setShowCode(!showCode)}
             className={`p-2 rounded-xl border transition-all duration-300 flex-shrink-0 ${showCode ? "bg-blue-500/20 border-blue-500 text-blue-400" : "bg-slate-800/60 border-slate-700 text-slate-500 hover:text-white hover:border-slate-500"}`}>
             <Code2 size={17} />
@@ -186,6 +202,9 @@ const Header = ({
 
           <div className="w-px h-5 bg-slate-700/50" />
 
+          {/* ✅ Theme Toggle — Tablet */}
+          <ThemeBtn size={16} />
+
           <button onClick={() => setShowCode(!showCode)}
             className={`p-2 rounded-xl border transition-all flex-shrink-0 ${showCode ? "bg-blue-500/20 border-blue-500 text-blue-400" : "bg-slate-800/60 border-slate-700 text-slate-500 hover:text-white"}`}>
             <Code2 size={16} />
@@ -198,6 +217,9 @@ const Header = ({
 
         {/* ══ MOBILE ══ */}
         <div className="flex md:hidden items-center gap-1.5">
+          {/* ✅ Theme Toggle — Mobile */}
+          <ThemeBtn size={16} />
+
           <button onClick={() => setShowCode(!showCode)}
             className={`p-2 rounded-xl border transition-all ${showCode ? "bg-blue-500/20 border-blue-500 text-blue-400" : "bg-slate-800/60 border-slate-700 text-slate-500"}`}>
             <Code2 size={16} />
@@ -218,7 +240,6 @@ const Header = ({
         <div className="border-t border-slate-800/60 bg-[#060913]/98 backdrop-blur-xl px-4 py-4 max-h-[80vh] overflow-y-auto">
           <div className="max-w-lg mx-auto space-y-3">
 
-            {/* Resources */}
             <div>
               <p className="text-[9px] uppercase tracking-widest text-blue-400 font-bold mb-2 px-1 flex items-center gap-1.5">
                 <BookOpen size={10} /> Learning Resources
@@ -232,7 +253,6 @@ const Header = ({
               </MobileSelect>
             </div>
 
-            {/* Mobile only — Sorting */}
             <div className="md:hidden">
               <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">Sorting</p>
               <MobileSelect value={selectedAlgo} onChange={handleSorting}
@@ -246,7 +266,6 @@ const Header = ({
               </MobileSelect>
             </div>
 
-            {/* Mobile only — Searching */}
             <div className="md:hidden">
               <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">Searching</p>
               <MobileSelect value={selectedSearchAlgo} onChange={handleSearching}
@@ -260,7 +279,6 @@ const Header = ({
               </MobileSelect>
             </div>
 
-            {/* DS */}
             <div>
               <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">Data Structure</p>
               <MobileSelect value={selectedPathAlgo} onChange={handleDS}
@@ -273,7 +291,6 @@ const Header = ({
               </MobileSelect>
             </div>
 
-            {/* Tree/Graph */}
             <div>
               <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">Tree / Graph</p>
               <MobileSelect value={selectedGraphAlgo} onChange={handleGraph}

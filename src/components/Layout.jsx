@@ -3,11 +3,12 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Header from './header';
 import Footer from './Footer';
 import { Bot, Send, X, Sparkles } from 'lucide-react';
+import { useTheme } from './ThemeContext'; // ✅ import
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
 /* ══════════════════════════════════════════════════════════
-   GLOBAL CHATBOT — সব page এ দেখাবে
+   GLOBAL CHATBOT
 ══════════════════════════════════════════════════════════ */
 const ChatBot = ({ isOpen, onClose, activeAlgo }) => {
   const [messages, setMessages] = useState([{
@@ -61,7 +62,6 @@ Answer clearly, under 200 words unless asked for detail. If user writes Bengali,
   return (
     <div className="fixed right-6 z-[100] flex flex-col rounded-3xl border border-slate-700/60 shadow-2xl overflow-hidden"
       style={{ width: "360px", bottom: "88px", maxHeight: "calc(100vh - 110px)", height: "500px", background: "#0b0e17" }}>
-      {/* Header */}
       <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-800 bg-[#0f1320]">
         <div className="p-1.5 bg-emerald-500/15 rounded-xl border border-emerald-500/25">
           <Sparkles size={16} className="text-emerald-400" />
@@ -75,7 +75,6 @@ Answer clearly, under 200 words unless asked for detail. If user writes Bengali,
         <button onClick={onClose} className="text-slate-600 hover:text-white transition p-1"><X size={16} /></button>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3" style={{ scrollbarWidth: "thin" }}>
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -107,7 +106,6 @@ Answer clearly, under 200 words unless asked for detail. If user writes Bengali,
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
       <div className="px-4 py-3 border-t border-slate-800 bg-[#0f1320] flex gap-2">
         <input
           value={input}
@@ -136,14 +134,14 @@ const Layout = () => {
   const [showCode,  setShowCode]  = useState(false);
   const [showChat,  setShowChat]  = useState(false);
 
+  const { isDark } = useTheme(); // ✅ theme state নাও
+
   const activeAlgo = selectedAlgo || selectedPathAlgo || selectedGraphAlgo || selectedSearchAlgo;
   const location = useLocation();
 
-  /* Resource page এ header algo state pass করা হয় না — শুধু Visualizer page এ */
-  const isVisualizerPage = location.pathname === "/";
-
   return (
-    <div className="min-h-screen bg-[#060913] text-slate-200 flex flex-col font-sans">
+    // ✅ isDark এর উপর ভিত্তি করে 'dark' class যোগ/সরানো হচ্ছে
+    <div className="min-h-screen flex flex-col font-sans transition-colors duration-300">
       <Header
         selectedAlgo={selectedAlgo}              setSelectedAlgo={setSelectedAlgo}
         selectedPathAlgo={selectedPathAlgo}      setSelectedPathAlgo={setSelectedPathAlgo}
@@ -153,7 +151,6 @@ const Layout = () => {
         showChat={showChat}                      setShowChat={setShowChat}
       />
 
-      {/* Page content */}
       <main className="flex-grow">
         <Outlet context={{
           selectedAlgo,       setSelectedAlgo,
@@ -164,17 +161,14 @@ const Layout = () => {
         }} />
       </main>
 
-      {/* ── Single Footer ── */}
       <Footer />
 
-      {/* ── Global Chatbot (সব page এ) ── */}
       <ChatBot
         isOpen={showChat}
         onClose={() => setShowChat(false)}
         activeAlgo={activeAlgo || location.pathname.replace("/", "")}
       />
 
-      {/* Floating chatbot button */}
       <button
         onClick={() => setShowChat(prev => !prev)}
         className={`fixed bottom-6 right-6 z-[99] w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 active:scale-90

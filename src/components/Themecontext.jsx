@@ -8,14 +8,17 @@ export const ThemeProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    const root = document.documentElement;
     if (isDark) {
-      root.classList.add('dark');
-      root.classList.remove('light');
+      // Dark mode — body থেকে light-mode সরাও
+      document.body.classList.remove('light-mode');
+      document.body.style.backgroundColor = '#060913';
+      document.body.style.color = '#e2e8f0';
       localStorage.setItem('theme', 'dark');
     } else {
-      root.classList.remove('dark');
-      root.classList.add('light');
+      // Light mode — body তে light-mode যোগ করো
+      document.body.classList.add('light-mode');
+      document.body.style.backgroundColor = '#f8fafc';
+      document.body.style.color = '#0f172a';
       localStorage.setItem('theme', 'light');
     }
   }, [isDark]);
