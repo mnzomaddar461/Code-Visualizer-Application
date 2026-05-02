@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Zap, Code2, ChevronDown, Bot, Menu, X, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Sun, Moon } from 'lucide-react';
+import { useTheme } from './ThemeContext';
 
 const Header = ({
   selectedAlgo,         setSelectedAlgo,

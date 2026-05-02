@@ -4,8 +4,10 @@ import Layout from './components/Layout';
 import SortingVisualizer from './components/visualizer';
 import LeetCode from './components/leedcode';
 import Roadmap from './components/Roadmap';
-import { C_CHAPTERS } from './components/cRoadmap';
-import { CPP_CHAPTERS } from './components/cppRoadmap';
+// import { C_CHAPTERS } from './components/cRoadmap';
+// import { CPP_CHAPTERS } from './components/cppRoadmap';
+import { C_CHAPTERS, C_RESOURCES } from './components/cRoadmap';
+import { CPP_CHAPTERS, CPP_RESOURCES } from './components/cppRoadmap';
 
 function App() {
   return (
@@ -30,6 +32,7 @@ function App() {
                 title="C Programming"
                 subtitle="Master C from basics to advanced concepts — the foundation of all programming."
                 icon="📘"
+                resources={C_RESOURCES}
               />
             } 
           />
@@ -44,6 +47,7 @@ function App() {
                 title="C++"
                 subtitle="Learn C++ with OOP, STL, and modern C++ features — from beginner to expert."
                 icon="⚡"
+                resources={CPP_RESOURCES}
               />
             } 
           />

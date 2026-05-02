@@ -4,8 +4,10 @@ import Home from './home';
 import Footer from './Footer';
 import LeetCode from './leedcode';
 import Roadmap from './Roadmap';
-import { C_CHAPTERS } from './cRoadmap';
-import { CPP_CHAPTERS } from './cppRoadmap';
+// import { C_CHAPTERS } from './cRoadmap';
+// import { CPP_CHAPTERS } from './cppRoadmap';
+import { C_CHAPTERS, C_RESOURCES } from "./cRoadmap";
+import { CPP_CHAPTERS, CPP_RESOURCES } from "./cppRoadmap";
 import {
   Play, RotateCcw, Plus, Trash2, RefreshCw,
   Code2, Pin, ArrowRightLeft, SquareCheck, GitCompare,
@@ -1147,9 +1149,33 @@ const Visualizer = () => {
       />
 
       {/* ── Page routing ── */}
-      {activePage === "leetcode" && <LeetCode/>}
+      {/* {activePage === "leetcode" && <LeetCode/>}
       {activePage === "c"        && <Roadmap chapters={C_CHAPTERS}   accentColor="blue"   title="C Programming" subtitle="C language এর basics থেকে advanced পর্যন্ত — beginners দের জন্য।"   icon="🔵"/>}
-      {activePage === "cpp"      && <Roadmap chapters={CPP_CHAPTERS} accentColor="purple" title="C++ Programming" subtitle="C++ এর OOP, STL, Templates সহ সম্পূর্ণ roadmap।" icon="🟣"/>}
+      {activePage === "cpp"      && <Roadmap chapters={CPP_CHAPTERS} accentColor="purple" title="C++ Programming" subtitle="C++ এর OOP, STL, Templates সহ সম্পূর্ণ roadmap।" icon="🟣"/>} */}
+
+      {activePage === "leetcode" && <LeetCode/>}
+
+{activePage === "c" && (
+  <Roadmap 
+    chapters={C_CHAPTERS}
+    resources={C_RESOURCES}
+    accentColor="blue" 
+    title="C Programming" 
+    subtitle="C language এর basics থেকে advanced পর্যন্ত — beginners দের জন্য।"
+    icon="🔵"
+  />
+)}
+
+{activePage === "cpp" && (
+  <Roadmap 
+    chapters={CPP_CHAPTERS}
+    resources={CPP_RESOURCES}
+    accentColor="purple" 
+    title="C++ Programming" 
+    subtitle="C++ এর OOP, STL, Templates সহ সম্পূর্ণ roadmap।"
+    icon="🟣"
+  />
+)}
 
       {activePage === "visualizer" && <main className="pt-28 px-6 max-w-7xl mx-auto w-full flex-grow mb-10">
         {activeAlgo ? (

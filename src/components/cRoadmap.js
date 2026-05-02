@@ -382,8 +382,6 @@ printf("%d", strlen(name));  // 5
 
 **Common String Functions** (string.h):
 \`\`\`c
-#include <string.h>
-
 strlen(s)          // length of string
 strcpy(dest, src)  // copy string
 strcat(dest, src)  // concatenate strings
@@ -473,3 +471,235 @@ fclose(fp2);
     ],
   },
 ];
+
+export const C_RESOURCES = {
+  youtubeChannels: [
+    {
+      id: 1,
+      name: "Code With Harry",
+      language: "Hindi/English",
+      subscribers: "3.2M",
+      description: "বাংলা এবং হিন্দিতে C programming এর সবচেয়ে সহজ ব্যাখ্যা। Beginner friendly tutorials।",
+      videoCount: 50,
+      bestFor: "Complete Beginners",
+      link: "https://www.youtube.com/@CodeWithHarry",
+      thumbnail: "📚",
+      highlights: ["Playlist based learning", "Quick concepts", "Project based"]
+    },
+    {
+      id: 2,
+      name: "Jenny's Lectures CS",
+      language: "English",
+      subscribers: "1.5M",
+      description: "Advanced C concepts, Data Structures, Algorithms সহ in-depth tutorials। Academic level এর content।",
+      videoCount: 150,
+      bestFor: "Intermediate to Advanced",
+      link: "https://www.youtube.com/@JennysLecturesCS",
+      thumbnail: "🎓",
+      highlights: ["Deep explanations", "Data structures", "Algorithms"]
+    },
+    {
+      id: 3,
+      name: "Apna College",
+      language: "Hindi/English",
+      subscribers: "4.5M",
+      description: "সম্পূর্ণ C roadmap, interviews প্রস্তুতি, real-world projects। Industry-level শেখার জন্য।",
+      videoCount: 80,
+      bestFor: "Beginners to Advanced",
+      link: "https://www.youtube.com/@ApnaCollege",
+      thumbnail: "💼",
+      highlights: ["Industry relevant", "Placement focused", "Interview prep"]
+    },
+    {
+      id: 4,
+      name: "Nadir Hussain",
+      language: "English",
+      subscribers: "350K",
+      description: "C programming fundamentals থেকে advanced পর্যন্ত detailed explanations।",
+      videoCount: 60,
+      bestFor: "Structured Learning",
+      link: "https://www.youtube.com/@CodexNadir",
+      thumbnail: "🔧",
+      highlights: ["Step-by-step", "Problem solving", "Logic building"]
+    },
+    {
+      id: 5,
+      name: "Programmers Institute",
+      language: "Bengali",
+      subscribers: "500K",
+      description: "বাংলা ভাষায় C programming এর comprehensive course। লোকাল developers এর জন্য।",
+      videoCount: 100,
+      bestFor: "Bengali Speakers",
+      link: "https://www.youtube.com/@programmersinstitute",
+      thumbnail: "🇧🇩",
+      highlights: ["Bengali content", "Local examples", "Easy explanation"]
+    }
+  ],
+  websites: [
+    {
+      id: 1,
+      name: "GeeksforGeeks",
+      category: "Tutorial & Practice",
+      url: "https://www.geeksforgeeks.org/c-programming-language/",
+      description: "সবচেয়ে বড় programming resource library। C concepts, examples, problems সব আছে।",
+      rating: 5,
+      bestFor: "Reference, Practice Problems, Interview Prep",
+      features: ["Detailed tutorials", "Code examples", "Interview questions", "DSA problems"]
+    },
+    {
+      id: 2,
+      name: "Tutorialspoint",
+      category: "Tutorial",
+      url: "https://www.tutorialspoint.com/cprogramming/",
+      description: "Interactive tutorials যেখানে direct code run করা যায়। Hands-on learning এর জন্য perfect।",
+      rating: 4.5,
+      bestFor: "Interactive Learning",
+      features: ["Try it yourself", "Step-by-step", "Quiz", "Exercises"]
+    },
+    {
+      id: 3,
+      name: "HackerRank",
+      category: "Practice Platform",
+      url: "https://www.hackerrank.com/domains/c",
+      description: "Competitive programming problems practice করার সেরা জায়গা। Real-world challenges।",
+      rating: 4.5,
+      bestFor: "Coding Problems, Competitions",
+      features: ["100+ problems", "Solution checker", "Discussion forum", "Badges"]
+    },
+    {
+      id: 4,
+      name: "LeetCode",
+      category: "Practice Platform",
+      url: "https://leetcode.com/problems/",
+      description: "Interview preparation এর জন্য best। Companies থেকে আসা প্রশ্ন দিয়ে তৈরি।",
+      rating: 5,
+      bestFor: "Interview Prep, DSA",
+      features: ["Company-specific problems", "Solutions", "Discussions", "Premium content"]
+    },
+    {
+      id: 5,
+      name: "W3Schools",
+      category: "Tutorial",
+      url: "https://www.w3schools.com/c/",
+      description: "C basics শেখার জন্য সবচেয়ে সহজ resource। খুব friendly interface।",
+      rating: 4,
+      bestFor: "Absolute Beginners",
+      features: ["Simple examples", "Interactive exercises", "Exercises", "Quizzes"]
+    },
+    {
+      id: 6,
+      name: "Codeforces",
+      category: "Competitive Programming",
+      url: "https://codeforces.com/",
+      description: "World-class competitive programming platform। Hard problems এবং contests।",
+      rating: 4.5,
+      bestFor: "Advanced Learning, Contests",
+      features: ["Regular contests", "Difficulty based", "Editorial", "Discussions"]
+    }
+  ],
+  books: [
+    {
+      id: 1,
+      title: "The C Programming Language (2nd Edition)",
+      author: "Brian W. Kernighan, Dennis M. Ritchie",
+      description: "C language এর বাইবেল। Creators দ্বারা লেখা। সব concepts অত্যন্ত গভীরভাবে।",
+      level: "All Levels",
+      rating: 5,
+      pages: 274,
+      link: "https://www.amazon.com/C-Programming-Language-2nd-Kernighan/dp/0131103628"
+    },
+    {
+      id: 2,
+      title: "Let Us C",
+      author: "Yashavant P. Kanetkar",
+      description: "বিশেষত ভারতীয় students এর জন্য বেস্টসেলার। খুবই practical এবং example-based।",
+      level: "Beginner to Intermediate",
+      rating: 4.5,
+      pages: 500,
+      link: "https://www.amazon.com/Let-Us-C-5th/dp/934306871X"
+    },
+    {
+      id: 3,
+      title: "C Programming Absolute Beginner's Guide",
+      author: "Greg Perry, Dean Miller",
+      description: "Complete beginners দের জন্য perfect। Step-by-step সব কিছু শেখানো হয়।",
+      level: "Beginner",
+      rating: 4,
+      pages: 456,
+      link: "https://www.amazon.com/C-Programming-Absolute-Beginners-Guide/dp/0789751984"
+    }
+  ],
+  practiceProblems: [
+    {
+      id: 1,
+      platform: "HackerEarth",
+      difficulty: "Easy to Hard",
+      problemCount: "500+",
+      url: "https://www.hackerearth.com/practice/c-problems/",
+      description: "Well-organized problem set with editorials।"
+    },
+    {
+      id: 2,
+      platform: "CodeChef",
+      difficulty: "Easy to Hard",
+      problemCount: "1000+",
+      url: "https://www.codechef.com/problems/",
+      description: "Indian platform, monthly contests, great community।"
+    },
+    {
+      id: 3,
+      platform: "Topcoder",
+      difficulty: "Medium to Hard",
+      problemCount: "400+",
+      url: "https://www.topcoder.com/community/competitive-programming/",
+      description: "Competitive programming focused, tournament style।"
+    }
+  ],
+  communities: [
+    {
+      id: 1,
+      name: "Stack Overflow",
+      type: "Q&A Forum",
+      url: "https://stackoverflow.com/questions/tagged/c",
+      description: "Programming problems এর সমাধান খোঁজার সেরা জায়গা।",
+      community: "1M+ developers"
+    },
+    {
+      id: 2,
+      name: "Reddit - r/cprogramming",
+      type: "Community Forum",
+      url: "https://www.reddit.com/r/cprogramming/",
+      description: "C programmers এর friendly community। questions এবং discussions।",
+      community: "100K+ members"
+    },
+    {
+      id: 3,
+      name: "GitHub",
+      type: "Code Sharing",
+      url: "https://github.com/topics/c-programming",
+      description: "Open-source projects থেকে শিখুন। Real-world code দেখুন।",
+      community: "World's largest"
+    }
+  ]
+};
+
+export const C_LEARNING_PATH = {
+  beginner: {
+    duration: "4 weeks",
+    resources: ["Code With Harry", "W3Schools", "GeeksforGeeks"],
+    topics: ["Basics", "Variables", "Operators", "Loops", "Functions"],
+    projects: ["Calculator", "Number guessing game", "Multiplication table"]
+  },
+  intermediate: {
+    duration: "6 weeks",
+    resources: ["Jenny's Lectures", "Tutorialspoint", "HackerRank"],
+    topics: ["Pointers", "Arrays", "Strings", "Structures", "File Handling"],
+    projects: ["Simple database", "Student management system", "File operations"]
+  },
+  advanced: {
+    duration: "8 weeks",
+    resources: ["GeeksforGeeks", "LeetCode", "Codeforces"],
+    topics: ["Dynamic Memory", "Data Structures", "Algorithms", "Recursion"],
+    projects: ["Binary search tree", "Graph algorithms", "Sorting implementations"]
+  }
+};
