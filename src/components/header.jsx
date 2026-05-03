@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Zap, Code2, ChevronDown, Bot, Menu, X, BookOpen, Sun, Moon } from 'lucide-react';
+import { Code2, ChevronDown, Bot, Menu, X, BookOpen, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from './ThemeContext';
 
@@ -13,7 +13,7 @@ const Header = ({
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { isDark, setIsDark } = useTheme(); // ✅ Theme toggle
+  const { isDark, setIsDark } = useTheme();
 
   const resetAll = () => {
     setSelectedAlgo(""); setSelectedPathAlgo("");
@@ -55,7 +55,6 @@ const Header = ({
     </div>
   );
 
-  // ✅ Reusable theme toggle button
   const ThemeBtn = ({ size = 17 }) => (
     <button
       onClick={() => setIsDark(!isDark)}
@@ -76,11 +75,15 @@ const Header = ({
       {/* ══ TOP BAR ══ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-5 py-3.5 flex justify-between items-center gap-3">
 
-        {/* Logo */}
+        {/* ✅ Logo — programming.png দিয়ে */}
         <div className="flex items-center gap-2.5 cursor-pointer group flex-shrink-0"
           onClick={() => { resetAll(); setMenuOpen(false); navigate("/"); }}>
-          <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20 group-hover:scale-110 transition-transform duration-300">
-            <Zap size={20} className="text-blue-500" />
+          <div className="group-hover:scale-110 transition-transform duration-300">
+            <img
+              src="/programming.png"
+              alt="Code Visualizer Logo"
+              className="w-9 h-9 rounded-xl object-contain"
+            />
           </div>
           <div>
             <h1 className="text-base sm:text-lg font-extrabold tracking-tight text-white leading-none">
@@ -152,7 +155,6 @@ const Header = ({
 
           <div className="w-px h-6 bg-slate-700/50 mx-0.5" />
 
-          {/* ✅ Theme Toggle — Desktop */}
           <ThemeBtn size={17} />
 
           <button onClick={() => setShowCode(!showCode)}
@@ -202,7 +204,6 @@ const Header = ({
 
           <div className="w-px h-5 bg-slate-700/50" />
 
-          {/* ✅ Theme Toggle — Tablet */}
           <ThemeBtn size={16} />
 
           <button onClick={() => setShowCode(!showCode)}
@@ -217,7 +218,6 @@ const Header = ({
 
         {/* ══ MOBILE ══ */}
         <div className="flex md:hidden items-center gap-1.5">
-          {/* ✅ Theme Toggle — Mobile */}
           <ThemeBtn size={16} />
 
           <button onClick={() => setShowCode(!showCode)}
