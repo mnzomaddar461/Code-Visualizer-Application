@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import SortingVisualizer from './components/visualizer';
 import LeetCode from './components/leedcode';
 import Roadmap from './components/Roadmap';
+import Compiler from './components/Compiler';
 // import { C_CHAPTERS } from './components/cRoadmap';
 // import { CPP_CHAPTERS } from './components/cppRoadmap';
 import { C_CHAPTERS, C_RESOURCES } from './components/cRoadmap';
@@ -21,6 +22,8 @@ function App() {
 
           {/* LeetCode Problems Page */}
           <Route path="leetcode-150" element={<LeetCode />} />
+
+          <Route path="compiler" element={<Compiler />} />
 
           {/* C Programming Roadmap */}
           <Route 

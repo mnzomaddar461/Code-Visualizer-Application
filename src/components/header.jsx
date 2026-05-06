@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Code2, ChevronDown, Bot, Menu, X, BookOpen, Sun, Moon } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Code2, ChevronDown, Bot, Menu, X, BookOpen, Sun, Moon, Terminal } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from './ThemeContext';
 
 const Header = ({
@@ -12,8 +12,11 @@ const Header = ({
   showChat,             setShowChat,
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
+  const location  = useLocation();
   const { isDark, setIsDark } = useTheme();
+
+  const isCompilerPage = location.pathname === '/compiler';
 
   const resetAll = () => {
     setSelectedAlgo(""); setSelectedPathAlgo("");
@@ -31,6 +34,7 @@ const Header = ({
     if      (val === "leetcode-150") navigate("/leetcode-150");
     else if (val === "c-roadmap")    navigate("/c-roadmap");
     else if (val === "cpp-roadmap")  navigate("/cpp-roadmap");
+    else if (val === "compiler")     navigate("/compiler");
   };
 
   const DesktopSelect = ({ value, onChange, borderCls, hoverCls, focusCls, chevronCls, placeholder, minW = "min-w-[110px]", children }) => (
@@ -56,34 +60,41 @@ const Header = ({
   );
 
   const ThemeBtn = ({ size = 17 }) => (
-    <button
-      onClick={() => setIsDark(!isDark)}
+    <button onClick={() => setIsDark(!isDark)}
       className={`p-2 rounded-xl border transition-all duration-300 flex-shrink-0 ${
         isDark
           ? "bg-slate-800/60 border-slate-700 text-slate-400 hover:text-yellow-400 hover:border-yellow-500/50"
           : "bg-yellow-500/10 border-yellow-500/30 text-yellow-500 hover:bg-yellow-500/20"
-      }`}
-      title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-    >
+      }`} title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}>
       {isDark ? <Sun size={size} /> : <Moon size={size} />}
+    </button>
+  );
+
+  // ✅ Compiler button — আলাদা icon
+  const CompilerBtn = ({ size = 17 }) => (
+    <button
+      onClick={() => { setMenuOpen(false); navigate('/compiler'); }}
+      className={`p-2 rounded-xl border transition-all duration-300 flex-shrink-0 ${
+        isCompilerPage
+          ? "bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+          : "bg-slate-800/60 border-slate-700 text-slate-500 hover:text-emerald-400 hover:border-emerald-500/50"
+      }`}
+      title="Online Compiler — C, C++, Python"
+    >
+      <Terminal size={size} />
     </button>
   );
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-[#060913]/95 backdrop-blur-xl border-b border-slate-800/60 shadow-2xl">
 
-      {/* ══ TOP BAR ══ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-5 py-3.5 flex justify-between items-center gap-3">
 
-        {/* ✅ Logo — programming.png দিয়ে */}
+        {/* Logo */}
         <div className="flex items-center gap-2.5 cursor-pointer group flex-shrink-0"
           onClick={() => { resetAll(); setMenuOpen(false); navigate("/"); }}>
           <div className="group-hover:scale-110 transition-transform duration-300">
-            <img
-              src="/programming.png"
-              alt="Code Visualizer Logo"
-              className="w-9 h-9 rounded-xl object-contain"
-            />
+            <img src="/programming.png" alt="Logo" className="w-9 h-9 rounded-xl object-contain" />
           </div>
           <div>
             <h1 className="text-base sm:text-lg font-extrabold tracking-tight text-white leading-none">
@@ -95,12 +106,12 @@ const Header = ({
           </div>
         </div>
 
-        {/* ══ DESKTOP (xl+) ══ */}
+        {/* ══ DESKTOP ══ */}
         <div className="hidden xl:flex items-center gap-2 flex-wrap justify-end">
+
           <DesktopSelect value={selectedAlgo} onChange={handleSorting}
             borderCls="border-slate-700/50" hoverCls="hover:border-blue-500/40"
-            focusCls="focus:border-blue-500/50" chevronCls="group-hover:text-blue-500"
-            placeholder="Sorting">
+            focusCls="focus:border-blue-500/50" chevronCls="group-hover:text-blue-500" placeholder="Sorting">
             <option value="Bubble Sort">Bubble Sort</option>
             <option value="Quick Sort">Quick Sort</option>
             <option value="Insertion Sort">Insertion Sort</option>
@@ -110,8 +121,7 @@ const Header = ({
 
           <DesktopSelect value={selectedSearchAlgo} onChange={handleSearching}
             borderCls="border-amber-700/40" hoverCls="hover:border-amber-500/60"
-            focusCls="focus:border-amber-500/70" chevronCls="group-hover:text-amber-500"
-            placeholder="Searching">
+            focusCls="focus:border-amber-500/70" chevronCls="group-hover:text-amber-500" placeholder="Searching">
             <option value="Linear Search">Linear Search</option>
             <option value="Binary Search">Binary Search</option>
             <option value="Jump Search">Jump Search</option>
@@ -141,7 +151,7 @@ const Header = ({
             <option value="Graph DFS">Graph DFS</option>
           </DesktopSelect>
 
-          {/* Resources */}
+          {/* Resources dropdown */}
           <div className="relative group flex-shrink-0">
             <select onChange={e => handleResources(e.target.value)} value=""
               className="appearance-none bg-blue-500/10 border border-blue-500/30 px-3 py-2 pr-8 rounded-xl text-[11px] font-bold outline-none cursor-pointer text-blue-400 hover:bg-blue-500/20 transition-all focus:border-blue-500 min-w-[105px]">
@@ -149,6 +159,7 @@ const Header = ({
               <option value="leetcode-150" className="bg-[#060913] text-white">LeetCode</option>
               <option value="c-roadmap"    className="bg-[#060913] text-white">C Roadmap</option>
               <option value="cpp-roadmap"  className="bg-[#060913] text-white">C++ Roadmap</option>
+              <option value="compiler"     className="bg-[#060913] text-white">💻 Compiler</option>
             </select>
             <BookOpen size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-blue-500 pointer-events-none" />
           </div>
@@ -156,19 +167,19 @@ const Header = ({
           <div className="w-px h-6 bg-slate-700/50 mx-0.5" />
 
           <ThemeBtn size={17} />
-
+          {/* ✅ Compiler icon button */}
+          <CompilerBtn size={17} />
           <button onClick={() => setShowCode(!showCode)}
             className={`p-2 rounded-xl border transition-all duration-300 flex-shrink-0 ${showCode ? "bg-blue-500/20 border-blue-500 text-blue-400" : "bg-slate-800/60 border-slate-700 text-slate-500 hover:text-white hover:border-slate-500"}`}>
             <Code2 size={17} />
           </button>
           <button onClick={() => setShowChat && setShowChat(p => !p)}
-            className={`p-2 rounded-xl border transition-all duration-300 flex-shrink-0 ${showChat ? "bg-emerald-500/20 border-emerald-500 text-emerald-400" : "bg-slate-800/60 border-slate-700 text-slate-500 hover:text-emerald-400 hover:border-emerald-500/50"}`}
-            title="AI Assistant">
+            className={`p-2 rounded-xl border transition-all duration-300 flex-shrink-0 ${showChat ? "bg-emerald-500/20 border-emerald-500 text-emerald-400" : "bg-slate-800/60 border-slate-700 text-slate-500 hover:text-emerald-400 hover:border-emerald-500/50"}`}>
             <Bot size={17} />
           </button>
         </div>
 
-        {/* ══ TABLET (md–xl) ══ */}
+        {/* ══ TABLET ══ */}
         <div className="hidden md:flex xl:hidden items-center gap-2">
           <div className="relative group">
             <select value={selectedAlgo || ""} onChange={e => handleSorting(e.target.value)}
@@ -182,7 +193,6 @@ const Header = ({
             </select>
             <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
           </div>
-
           <div className="relative group">
             <select value={selectedSearchAlgo || ""} onChange={e => handleSearching(e.target.value)}
               className="appearance-none bg-slate-900/80 border border-amber-700/40 px-3 py-2 pr-8 rounded-xl text-[11px] font-semibold outline-none cursor-pointer text-slate-300 hover:border-amber-500/60 transition-all min-w-[100px]">
@@ -195,17 +205,13 @@ const Header = ({
             </select>
             <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
           </div>
-
           <button onClick={() => setMenuOpen(p => !p)}
             className={`p-2 rounded-xl border transition-all text-xs font-bold flex items-center gap-1.5 flex-shrink-0 ${menuOpen ? "border-blue-500 text-blue-400 bg-blue-500/10" : "border-slate-700 text-slate-400 bg-slate-800/60 hover:text-white"}`}>
-            <Menu size={15} />
-            <span className="text-[10px]">More</span>
+            <Menu size={15} /><span className="text-[10px]">More</span>
           </button>
-
           <div className="w-px h-5 bg-slate-700/50" />
-
           <ThemeBtn size={16} />
-
+          <CompilerBtn size={16} />
           <button onClick={() => setShowCode(!showCode)}
             className={`p-2 rounded-xl border transition-all flex-shrink-0 ${showCode ? "bg-blue-500/20 border-blue-500 text-blue-400" : "bg-slate-800/60 border-slate-700 text-slate-500 hover:text-white"}`}>
             <Code2 size={16} />
@@ -219,7 +225,7 @@ const Header = ({
         {/* ══ MOBILE ══ */}
         <div className="flex md:hidden items-center gap-1.5">
           <ThemeBtn size={16} />
-
+          <CompilerBtn size={16} />
           <button onClick={() => setShowCode(!showCode)}
             className={`p-2 rounded-xl border transition-all ${showCode ? "bg-blue-500/20 border-blue-500 text-blue-400" : "bg-slate-800/60 border-slate-700 text-slate-500"}`}>
             <Code2 size={16} />
@@ -250,14 +256,24 @@ const Header = ({
                 <option value="leetcode-150">🔥 LeetCode Problems (100)</option>
                 <option value="c-roadmap">🅒 C Language Roadmap</option>
                 <option value="cpp-roadmap">⚡ C++ Roadmap</option>
+                <option value="compiler">💻 Online Compiler</option>
               </MobileSelect>
             </div>
+
+            {/* ✅ Mobile compiler shortcut */}
+            <button onClick={() => { setMenuOpen(false); navigate('/compiler'); }}
+              className={`w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-sm border transition-all ${
+                isCompilerPage
+                  ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
+                  : "bg-slate-900/50 border-slate-700/50 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400"
+              }`}>
+              <Terminal size={15} /> Open Compiler
+            </button>
 
             <div className="md:hidden">
               <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">Sorting</p>
               <MobileSelect value={selectedAlgo} onChange={handleSorting}
-                borderCls="border-slate-700/50" focusCls="focus:border-blue-500/50"
-                placeholder="Select Sorting">
+                borderCls="border-slate-700/50" focusCls="focus:border-blue-500/50" placeholder="Select Sorting">
                 <option value="Bubble Sort">Bubble Sort</option>
                 <option value="Quick Sort">Quick Sort</option>
                 <option value="Insertion Sort">Insertion Sort</option>
@@ -269,8 +285,7 @@ const Header = ({
             <div className="md:hidden">
               <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">Searching</p>
               <MobileSelect value={selectedSearchAlgo} onChange={handleSearching}
-                borderCls="border-amber-700/40" focusCls="focus:border-amber-500/70"
-                placeholder="Select Searching">
+                borderCls="border-amber-700/40" focusCls="focus:border-amber-500/70" placeholder="Select Searching">
                 <option value="Linear Search">Linear Search</option>
                 <option value="Binary Search">Binary Search</option>
                 <option value="Jump Search">Jump Search</option>
@@ -282,8 +297,7 @@ const Header = ({
             <div>
               <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">Data Structure</p>
               <MobileSelect value={selectedPathAlgo} onChange={handleDS}
-                borderCls="border-slate-700/50" focusCls="focus:border-green-500/50"
-                placeholder="Select Data Structure">
+                borderCls="border-slate-700/50" focusCls="focus:border-green-500/50" placeholder="Select Data Structure">
                 <option value="Stack">Stack (LIFO)</option>
                 <option value="Queue">Queue (FIFO)</option>
                 <option value="Linked List">Linked List</option>
@@ -294,8 +308,7 @@ const Header = ({
             <div>
               <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">Tree / Graph</p>
               <MobileSelect value={selectedGraphAlgo} onChange={handleGraph}
-                borderCls="border-purple-700/40" focusCls="focus:border-purple-500/70"
-                placeholder="Select Tree / Graph">
+                borderCls="border-purple-700/40" focusCls="focus:border-purple-500/70" placeholder="Select Tree / Graph">
                 <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── Tree ──</option>
                 <option value="Tree BFS">Tree BFS (Level Order)</option>
                 <option value="Tree DFS">Tree DFS (Pre-order)</option>
