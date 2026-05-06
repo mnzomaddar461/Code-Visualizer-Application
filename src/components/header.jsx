@@ -159,7 +159,7 @@ const Header = ({
               <option value="leetcode-150" className="bg-[#060913] text-white">LeetCode</option>
               <option value="c-roadmap"    className="bg-[#060913] text-white">C Roadmap</option>
               <option value="cpp-roadmap"  className="bg-[#060913] text-white">C++ Roadmap</option>
-              <option value="compiler"     className="bg-[#060913] text-white">💻 Compiler</option>
+              <option value="compiler"     className="bg-[#060913] text-white">Compiler</option>
             </select>
             <BookOpen size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-blue-500 pointer-events-none" />
           </div>
@@ -253,10 +253,10 @@ const Header = ({
               <MobileSelect value="" onChange={handleResources}
                 borderCls="border-blue-500/30" focusCls="focus:border-blue-500"
                 placeholder="📚 Select Resource">
-                <option value="leetcode-150">🔥 LeetCode Problems (100)</option>
-                <option value="c-roadmap">🅒 C Language Roadmap</option>
-                <option value="cpp-roadmap">⚡ C++ Roadmap</option>
-                <option value="compiler">💻 Online Compiler</option>
+                <option value="leetcode-150">LeetCode Problems (100)</option>
+                <option value="c-roadmap">C Language Roadmap</option>
+                <option value="cpp-roadmap">C++ Roadmap</option>
+                <option value="compiler">Online Compiler</option>
               </MobileSelect>
             </div>
 

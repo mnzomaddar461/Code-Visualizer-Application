@@ -95,6 +95,11 @@ const Footer = () => {
                     C++ Roadmap
                   </Link>
                 </li>
+                <li>
+                  <Link to="/compiler" className="hover:text-blue-500 transition-colors">
+                    Compiler
+                  </Link>
+                </li>
               </ul>
             </div>
 

@@ -113,7 +113,7 @@ const Home = () => {
           <HomeCard icon={<GitGraphIcon size={32} />} title="Graph and Tree"          desc="Master complex traversals like BFS and DFS by visualizing dynamic nodes and edge connections in real-time."                                      color="green"   isDark={isDark} />
 
           <div className="md:col-span-2">
-            <HomeCard icon={<Puzzle size={32} />}     title="LeetCode 100 problems"   desc="Conquer the top 100 most popular coding problems. Master core data structures and algorithms to ace your next technical interview."              color="yellow"  isDark={isDark} />
+            <HomeCard icon={<Puzzle size={32} />}     title="LeetCode 100 problems"   desc="Conquer the top 100 most popular coding problems. Master core data structures and algorithms to ace your next technical interview."              color="yellow" buttonText="Open Problems"  isDark={isDark} onClick={() => navigate('/leetcode-150')} />
           </div>
 
           {/* ✅ Compiler card — clickable, navigate করবে */}
@@ -124,15 +124,16 @@ const Home = () => {
               desc="Browser এ সরাসরি C, C++ এবং Python code লেখো এবং run করো। Stdin input সাপোর্ট, real-time output।"
               color="emerald"
               isDark={isDark}
+              buttonText="Open Compiler"
               onClick={() => navigate('/compiler')}
             />
           </div>
 
           <div className="md:col-span-2">
-            <HomeCard icon={<CIcon />}   title="C Programming Language 0 to Hero!"   desc="Build a rock-solid foundation in logic building. Learn pointers, memory allocation, and efficient algorithms from scratch."                  color="pink"    isDark={isDark} />
+            <HomeCard icon={<CIcon />}   title="C Programming Language 0 to Hero!"   desc="Build a rock-solid foundation in logic building. Learn pointers, memory allocation, and efficient algorithms from scratch."                  color="pink"    isDark={isDark} buttonText="Open C Resource" onClick={() => navigate('/c-roadmap')}/>
           </div>
           <div className="md:col-span-2">
-            <HomeCard icon={<CppIcon />} title="C++ Programming Language 0 to Hero!" desc="Master the power of C++ from scratch. Dive deep into Object-Oriented Programming, Memory Management, and the Standard Template Library (STL)." color="orange"  isDark={isDark} />
+            <HomeCard icon={<CppIcon />} title="C++ Programming Language 0 to Hero!" desc="Master the power of C++ from scratch. Dive deep into Object-Oriented Programming, Memory Management, and the Standard Template Library (STL)." color="orange"  isDark={isDark} buttonText="Open C++ Resource" onClick={() => navigate('/cpp-roadmap')} />
           </div>
         </div>
       </div>
@@ -140,7 +141,7 @@ const Home = () => {
   );
 };
 
-const HomeCard = ({ icon, title, desc, color, isDark, onClick }) => {
+const HomeCard = ({ icon, title, desc, color, isDark,buttonText, onClick }) => {
   const style = iconStyles[color];
   return (
     <div
@@ -159,7 +160,7 @@ const HomeCard = ({ icon, title, desc, color, isDark, onClick }) => {
         <p className="text-slate-500 leading-relaxed text-sm font-medium">{desc}</p>
         {onClick && (
           <div className={`mt-4 flex items-center gap-2 text-sm font-bold ${style.text}`}>
-            <Terminal size={14} /> Open Compiler →
+            {buttonText || "Open"} →
           </div>
         )}
       </div>
