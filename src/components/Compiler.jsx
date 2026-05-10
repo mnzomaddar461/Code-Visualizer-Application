@@ -484,6 +484,7 @@ function useCodeMirror({ value, onChange, language, color }) {
   const viewRef   = useRef(null);
   const langComp  = useRef(new Compartment());
   const isUpdating = useRef(false);
+  const onChangeRef = useRef(onChange);
 
   /* ── Custom dark theme matching project style ── */
   const projectTheme = EditorView.theme({
@@ -533,7 +534,7 @@ function useCodeMirror({ value, onChange, language, color }) {
   }, { dark: true });
 
   useEffect(() => {
-    if (!editorRef.current) return;
+    onChangeRef.current = onChange;
 
     const startState = EditorState.create({
       doc: value,
@@ -573,7 +574,7 @@ function useCodeMirror({ value, onChange, language, color }) {
         /* On change callback */
         EditorView.updateListener.of((update) => {
           if (update.docChanged && !isUpdating.current) {
-            onChange(update.state.doc.toString());
+          onChangeRef.current(update.state.doc.toString()); // ✅ ref দিয়ে call
           }
         }),
       ],
@@ -583,7 +584,7 @@ function useCodeMirror({ value, onChange, language, color }) {
     viewRef.current = view;
 
     return () => { view.destroy(); viewRef.current = null; };
-  }, []); // mount only once
+  }, [onChange]); // mount only once
 
   /* ── Sync external value changes (language switch, sample load) ── */
   useEffect(() => {
