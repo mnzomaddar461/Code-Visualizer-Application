@@ -732,9 +732,9 @@ export const CPP_RESOURCES = {
       language: "Hindi/English",
       subscribers: "4.5M",
       description: "C++ placements আর interview প্রস্তুতির জন্য। Industry-level content।",
-      videoCount: 100,
+      videoCount: 250,
       bestFor: "Placement & Interview Prep",
-      link: "https://www.youtube.com/@ApnaCollege",
+      link: "https://youtube.com/playlist?list=PLfqMhTWNBTe0b2nM6JHVCnAkhQRGiZMSJ&si=vNidlM0V78JVemR0",
       thumbnail: "💼",
       highlights: ["Placement focused", "DSA in C++", "Interview questions"]
     },
@@ -744,21 +744,21 @@ export const CPP_RESOURCES = {
       language: "English",
       subscribers: "500K",
       description: "Modern C++, C++ best practices, game development। Very professional approach।",
-      videoCount: 200,
+      videoCount: 115,
       bestFor: "Professional Development",
-      link: "https://www.youtube.com/@TheChernoProject",
+      link: "https://youtube.com/playlist?list=PLlrATfBNZ98dudnM48yfGUldqGD0S4FFb&si=S5lzLvQSgw5MrAxa",
       thumbnail: "⚙️",
       highlights: ["Modern C++17/20", "Best practices", "In-depth explanations"]
     },
     {
       id: 5,
-      name: "Kunal Kushwaha",
+      name: "Anisul Islam",
       language: "Hindi/English",
       subscribers: "1M",
       description: "C++ সহ DSA, System design, Interview prep সব কিছু। Beginner-friendly।",
       videoCount: 50,
       bestFor: "Beginners to Advanced",
-      link: "https://www.youtube.com/@KunalKushwaha",
+      link: "https://youtube.com/playlist?list=PLgH5QX0i9K3q0ZKeXtF--CZ0PdH1sSbYL&si=rLDA5Jy1Q5jItfA_",
       thumbnail: "🎯",
       highlights: ["DSA in C++", "Problem solving", "Interview prep"]
     }

@@ -494,7 +494,7 @@ export const C_RESOURCES = {
       description: "Advanced C concepts, Data Structures, Algorithms সহ in-depth tutorials। Academic level এর content।",
       videoCount: 150,
       bestFor: "Intermediate to Advanced",
-      link: "https://www.youtube.com/@JennysLecturesCS",
+      link: "https://www.youtube.com/@JennyslecturesCSIT",
       thumbnail: "🎓",
       highlights: ["Deep explanations", "Data structures", "Algorithms"]
     },
@@ -506,31 +506,31 @@ export const C_RESOURCES = {
       description: "সম্পূর্ণ C roadmap, interviews প্রস্তুতি, real-world projects। Industry-level শেখার জন্য।",
       videoCount: 80,
       bestFor: "Beginners to Advanced",
-      link: "https://www.youtube.com/@ApnaCollege",
+      link: "https://www.youtube.com/@ApnaCollegeOfficial",
       thumbnail: "💼",
       highlights: ["Industry relevant", "Placement focused", "Interview prep"]
     },
     {
       id: 4,
-      name: "Nadir Hussain",
-      language: "English",
-      subscribers: "350K",
+      name: "Anisul Islam",
+      language: "Bangla",
+      subscribers: "527K",
       description: "C programming fundamentals থেকে advanced পর্যন্ত detailed explanations।",
       videoCount: 60,
       bestFor: "Structured Learning",
-      link: "https://www.youtube.com/@CodexNadir",
+      link: "https://www.youtube.com/@anisul-islam",
       thumbnail: "🔧",
       highlights: ["Step-by-step", "Problem solving", "Logic building"]
     },
     {
       id: 5,
-      name: "Programmers Institute",
+      name: "Hablu Programmer Team",
       language: "Bengali",
       subscribers: "500K",
       description: "বাংলা ভাষায় C programming এর comprehensive course। লোকাল developers এর জন্য।",
       videoCount: 100,
       bestFor: "Bengali Speakers",
-      link: "https://www.youtube.com/@programmersinstitute",
+      link: "https://youtube.com/playlist?list=PLNMnAEqLBwmrwDSycdTLsvZBhmK5kOtgV&si=egaVomH9ukh18szg",
       thumbnail: "🇧🇩",
       highlights: ["Bengali content", "Local examples", "Easy explanation"]
     }
