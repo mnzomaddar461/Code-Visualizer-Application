@@ -9,6 +9,7 @@ import Compiler from './components/Compiler';
 // import { CPP_CHAPTERS } from './components/cppRoadmap';
 import { C_CHAPTERS, C_RESOURCES } from './components/cRoadmap';
 import { CPP_CHAPTERS, CPP_RESOURCES } from './components/cppRoadmap';
+import DocumentPage from './components/DocumentPage';
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
           />
           
         </Route>
+        <Route path="documentation" element={<DocumentPage />} />
       </Routes>
     </BrowserRouter>
   );

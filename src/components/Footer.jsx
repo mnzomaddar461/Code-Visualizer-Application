@@ -100,6 +100,11 @@ const Footer = () => {
                     Compiler
                   </Link>
                 </li>
+                <li>
+                  <Link to="/documentation" className="hover:text-blue-500 transition-colors">
+                    <strong>Documention.</strong>
+                  </Link>
+                </li>
               </ul>
             </div>
 
