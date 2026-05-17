@@ -1,36 +1,28 @@
-import React from 'react';
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import SortingVisualizer from './components/visualizer';
 import LeetCode from './components/leedcode';
 import Roadmap from './components/Roadmap';
 import Compiler from './components/Compiler';
-// import { C_CHAPTERS } from './components/cRoadmap';
-// import { CPP_CHAPTERS } from './components/cppRoadmap';
 import { C_CHAPTERS, C_RESOURCES } from './components/cRoadmap';
 import { CPP_CHAPTERS, CPP_RESOURCES } from './components/cppRoadmap';
 import DocumentPage from './components/DocumentPage';
+
+// ✅ OnboardingTour এখান থেকে সরানো হয়েছে — Layout.jsx এ নিয়ে যাওয়া হয়েছে
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Layout wraps all routes - shows Header & Footer on every page */}
         <Route path="/" element={<Layout />}>
-          
-          {/* Main Visualizer Page */}
           <Route index element={<SortingVisualizer />} />
-
-          {/* LeetCode Problems Page */}
           <Route path="leetcode-150" element={<LeetCode />} />
-
           <Route path="compiler" element={<Compiler />} />
-
-          {/* C Programming Roadmap */}
-          <Route 
-            path="c-roadmap" 
+          <Route
+            path="c-roadmap"
             element={
-              <Roadmap 
+              <Roadmap
                 chapters={C_CHAPTERS}
                 accentColor="blue"
                 title="C Programming"
@@ -38,14 +30,12 @@ function App() {
                 icon="📘"
                 resources={C_RESOURCES}
               />
-            } 
+            }
           />
-
-          {/* C++ Programming Roadmap */}
-          <Route 
-            path="cpp-roadmap" 
+          <Route
+            path="cpp-roadmap"
             element={
-              <Roadmap 
+              <Roadmap
                 chapters={CPP_CHAPTERS}
                 accentColor="purple"
                 title="C++"
@@ -53,9 +43,8 @@ function App() {
                 icon="⚡"
                 resources={CPP_RESOURCES}
               />
-            } 
+            }
           />
-          
         </Route>
         <Route path="documentation" element={<DocumentPage />} />
       </Routes>

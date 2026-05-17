@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Code2, ChevronDown, Bot, Menu, X, BookOpen, Sun, Moon, Terminal } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from './ThemeContext';
+import { useLang } from './LanguageContext';
 
 const Header = ({
   selectedAlgo,         setSelectedAlgo,
@@ -15,6 +16,7 @@ const Header = ({
   const navigate  = useNavigate();
   const location  = useLocation();
   const { isDark, setIsDark } = useTheme();
+  const { isBn, toggleLang }  = useLang();
 
   const isCompilerPage = location.pathname === '/compiler';
 
@@ -37,8 +39,23 @@ const Header = ({
     else if (val === "compiler")     navigate("/compiler");
   };
 
-  const DesktopSelect = ({ value, onChange, borderCls, hoverCls, focusCls, chevronCls, placeholder, minW = "min-w-[110px]", children }) => (
-    <div className="relative group flex-shrink-0">
+  /* ── Dropdown labels — বাংলা / ইংরেজি ── */
+  const t = {
+    sorting:       isBn ? "Sorting"        : "Sorting",
+    searching:     isBn ? "Searching"      : "Searching",
+    dataStructure: isBn ? "Data Structure" : "Data Structure",
+    treeGraph:     isBn ? "Tree / Graph"   : "Tree / Graph",
+    resources:     isBn ? "Resources"      : "Resources",
+    leetcode:      isBn ? "LeetCode"       : "LeetCode",
+    cRoadmap:      isBn ? "C রোডম্যাপ"    : "C Roadmap",
+    cppRoadmap:    isBn ? "C++ রোডম্যাপ"  : "C++ Roadmap",
+    compiler:      isBn ? "কম্পাইলার"     : "Compiler",
+    openCompiler:  isBn ? "কম্পাইলার খোলো" : "Open Compiler",
+    more:          isBn ? "আরো"            : "More",
+  };
+
+  const DesktopSelect = ({ value, onChange, borderCls, hoverCls, focusCls, chevronCls, placeholder, minW = "min-w-[110px]", tourId, children }) => (
+    <div className="relative group flex-shrink-0" data-tour={tourId}>
       <select value={value} onChange={e => onChange(e.target.value)}
         className={`appearance-none bg-slate-900/80 border ${borderCls} px-3 py-2 pr-8 rounded-xl text-[11px] font-semibold outline-none cursor-pointer text-slate-300 ${hoverCls} transition-all ${focusCls} ${minW}`}>
         <option value="" disabled hidden>{placeholder}</option>
@@ -70,9 +87,22 @@ const Header = ({
     </button>
   );
 
-  // ✅ Compiler button — আলাদা icon
+  /* ── BN / EN Language Toggle Button ── */
+  const LangBtn = ({ size = 17 }) => (
+    <button
+      onClick={toggleLang}
+      title={isBn ? "Switch to English" : "বাংলায় দেখো"}
+      className="flex-shrink-0 px-2.5 py-1.5 rounded-xl border transition-all duration-300 font-bold text-[11px] tracking-wide
+        bg-slate-800/60 border-slate-700 text-slate-400
+        hover:bg-indigo-500/15 hover:border-indigo-500/50 hover:text-indigo-400"
+    >
+      {isBn ? "EN" : "বাং"}
+    </button>
+  );
+
   const CompilerBtn = ({ size = 17 }) => (
     <button
+      data-tour="compiler"
       onClick={() => { setMenuOpen(false); navigate('/compiler'); }}
       className={`p-2 rounded-xl border transition-all duration-300 flex-shrink-0 ${
         isCompilerPage
@@ -109,57 +139,59 @@ const Header = ({
         {/* ══ DESKTOP ══ */}
         <div className="hidden xl:flex items-center gap-2 flex-wrap justify-end">
 
-          <DesktopSelect value={selectedAlgo} onChange={handleSorting}
+          <DesktopSelect tourId="sorting" value={selectedAlgo} onChange={handleSorting}
             borderCls="border-slate-700/50" hoverCls="hover:border-blue-500/40"
-            focusCls="focus:border-blue-500/50" chevronCls="group-hover:text-blue-500" placeholder="Sorting">
-            <option value="Bubble Sort">Bubble Sort</option>
-            <option value="Quick Sort">Quick Sort</option>
-            <option value="Insertion Sort">Insertion Sort</option>
-            <option value="Merge Sort">Merge Sort</option>
-            <option value="Selection Sort">Selection Sort</option>
+            focusCls="focus:border-blue-500/50" chevronCls="group-hover:text-blue-500"
+            placeholder={t.sorting}>
+            <option value="Bubble Sort">{isBn ? "বাবল সর্ট"     : "Bubble Sort"}</option>
+            <option value="Quick Sort">{isBn ? "কুইক সর্ট"      : "Quick Sort"}</option>
+            <option value="Insertion Sort">{isBn ? "ইনসার্শন সর্ট" : "Insertion Sort"}</option>
+            <option value="Merge Sort">{isBn ? "মার্জ সর্ট"     : "Merge Sort"}</option>
+            <option value="Selection Sort">{isBn ? "সিলেকশন সর্ট" : "Selection Sort"}</option>
           </DesktopSelect>
 
-          <DesktopSelect value={selectedSearchAlgo} onChange={handleSearching}
+          <DesktopSelect tourId="searching" value={selectedSearchAlgo} onChange={handleSearching}
             borderCls="border-amber-700/40" hoverCls="hover:border-amber-500/60"
-            focusCls="focus:border-amber-500/70" chevronCls="group-hover:text-amber-500" placeholder="Searching">
-            <option value="Linear Search">Linear Search</option>
-            <option value="Binary Search">Binary Search</option>
-            <option value="Jump Search">Jump Search</option>
-            <option value="Fibonacci Search">Fibonacci Search</option>
-            <option value="Interpolation Search">Interpolation Search</option>
+            focusCls="focus:border-amber-500/70" chevronCls="group-hover:text-amber-500"
+            placeholder={t.searching}>
+            <option value="Linear Search">{isBn ? "লিনিয়ার সার্চ"       : "Linear Search"}</option>
+            <option value="Binary Search">{isBn ? "বাইনারি সার্চ"        : "Binary Search"}</option>
+            <option value="Jump Search">{isBn ? "জাম্প সার্চ"          : "Jump Search"}</option>
+            <option value="Fibonacci Search">{isBn ? "ফিবোনাচি সার্চ"  : "Fibonacci Search"}</option>
+            <option value="Interpolation Search">{isBn ? "ইন্টারপোলেশন সার্চ" : "Interpolation Search"}</option>
           </DesktopSelect>
 
-          <DesktopSelect value={selectedPathAlgo} onChange={handleDS}
+          <DesktopSelect tourId="ds" value={selectedPathAlgo} onChange={handleDS}
             borderCls="border-slate-700/50" hoverCls="hover:border-green-500/40"
             focusCls="focus:border-green-500/50" chevronCls="group-hover:text-green-500"
-            placeholder="Data Structure" minW="min-w-[120px]">
-            <option value="Stack">Stack (LIFO)</option>
-            <option value="Queue">Queue (FIFO)</option>
-            <option value="Linked List">Linked List</option>
-            <option value="Double Linked List">Double Linked List</option>
+            placeholder={t.dataStructure} minW="min-w-[120px]">
+            <option value="Stack">{isBn ? "স্ট্যাক (LIFO)"        : "Stack (LIFO)"}</option>
+            <option value="Queue">{isBn ? "কিউ (FIFO)"            : "Queue (FIFO)"}</option>
+            <option value="Linked List">{isBn ? "লিংকড লিস্ট"    : "Linked List"}</option>
+            <option value="Double Linked List">{isBn ? "ডাবল লিংকড লিস্ট" : "Double Linked List"}</option>
           </DesktopSelect>
 
-          <DesktopSelect value={selectedGraphAlgo} onChange={handleGraph}
+          <DesktopSelect tourId="tree" value={selectedGraphAlgo} onChange={handleGraph}
             borderCls="border-purple-700/40" hoverCls="hover:border-purple-500/60"
             focusCls="focus:border-purple-500/70" chevronCls="group-hover:text-purple-500"
-            placeholder="Tree / Graph" minW="min-w-[115px]">
-            <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── Tree ──</option>
+            placeholder={t.treeGraph} minW="min-w-[115px]">
+            <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── {isBn ? "ট্রি" : "Tree"} ──</option>
             <option value="Tree BFS">Tree BFS</option>
             <option value="Tree DFS">Tree DFS</option>
-            <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── Graph ──</option>
+            <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── {isBn ? "গ্রাফ" : "Graph"} ──</option>
             <option value="Graph BFS">Graph BFS</option>
             <option value="Graph DFS">Graph DFS</option>
           </DesktopSelect>
 
-          {/* Resources dropdown */}
-          <div className="relative group flex-shrink-0">
+          {/* Resources */}
+          <div className="relative group flex-shrink-0" data-tour="resources">
             <select onChange={e => handleResources(e.target.value)} value=""
               className="appearance-none bg-blue-500/10 border border-blue-500/30 px-3 py-2 pr-8 rounded-xl text-[11px] font-bold outline-none cursor-pointer text-blue-400 hover:bg-blue-500/20 transition-all focus:border-blue-500 min-w-[105px]">
-              <option value="" disabled hidden>Resources</option>
-              <option value="leetcode-150" className="bg-[#060913] text-white">LeetCode</option>
-              <option value="c-roadmap"    className="bg-[#060913] text-white">C Roadmap</option>
-              <option value="cpp-roadmap"  className="bg-[#060913] text-white">C++ Roadmap</option>
-              <option value="compiler"     className="bg-[#060913] text-white">Compiler</option>
+              <option value="" disabled hidden>{t.resources}</option>
+              <option value="leetcode-150" className="bg-[#060913] text-white">{t.leetcode}</option>
+              <option value="c-roadmap"    className="bg-[#060913] text-white">{t.cRoadmap}</option>
+              <option value="cpp-roadmap"  className="bg-[#060913] text-white">{t.cppRoadmap}</option>
+              <option value="compiler"     className="bg-[#060913] text-white">{t.compiler}</option>
             </select>
             <BookOpen size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-blue-500 pointer-events-none" />
           </div>
@@ -167,13 +199,17 @@ const Header = ({
           <div className="w-px h-6 bg-slate-700/50 mx-0.5" />
 
           <ThemeBtn size={17} />
-          {/* ✅ Compiler icon button */}
+          <LangBtn size={17} />
           <CompilerBtn size={17} />
+
           <button onClick={() => setShowCode(!showCode)}
             className={`p-2 rounded-xl border transition-all duration-300 flex-shrink-0 ${showCode ? "bg-blue-500/20 border-blue-500 text-blue-400" : "bg-slate-800/60 border-slate-700 text-slate-500 hover:text-white hover:border-slate-500"}`}>
             <Code2 size={17} />
           </button>
-          <button onClick={() => setShowChat && setShowChat(p => !p)}
+
+          <button
+            data-tour="chatbot"
+            onClick={() => setShowChat && setShowChat(p => !p)}
             className={`p-2 rounded-xl border transition-all duration-300 flex-shrink-0 ${showChat ? "bg-emerald-500/20 border-emerald-500 text-emerald-400" : "bg-slate-800/60 border-slate-700 text-slate-500 hover:text-emerald-400 hover:border-emerald-500/50"}`}>
             <Bot size={17} />
           </button>
@@ -181,42 +217,45 @@ const Header = ({
 
         {/* ══ TABLET ══ */}
         <div className="hidden md:flex xl:hidden items-center gap-2">
-          <div className="relative group">
+          <div className="relative group" data-tour="sorting">
             <select value={selectedAlgo || ""} onChange={e => handleSorting(e.target.value)}
               className="appearance-none bg-slate-900/80 border border-slate-700/50 px-3 py-2 pr-8 rounded-xl text-[11px] font-semibold outline-none cursor-pointer text-slate-300 hover:border-blue-500/40 transition-all min-w-[100px]">
-              <option value="" disabled hidden>Sorting</option>
-              <option value="Bubble Sort">Bubble Sort</option>
-              <option value="Quick Sort">Quick Sort</option>
-              <option value="Insertion Sort">Insertion Sort</option>
-              <option value="Merge Sort">Merge Sort</option>
-              <option value="Selection Sort">Selection Sort</option>
+              <option value="" disabled hidden>{t.sorting}</option>
+              <option value="Bubble Sort">{isBn ? "বাবল সর্ট" : "Bubble Sort"}</option>
+              <option value="Quick Sort">{isBn ? "কুইক সর্ট" : "Quick Sort"}</option>
+              <option value="Insertion Sort">{isBn ? "ইনসার্শন সর্ট" : "Insertion Sort"}</option>
+              <option value="Merge Sort">{isBn ? "মার্জ সর্ট" : "Merge Sort"}</option>
+              <option value="Selection Sort">{isBn ? "সিলেকশন সর্ট" : "Selection Sort"}</option>
             </select>
             <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
           </div>
-          <div className="relative group">
+          <div className="relative group" data-tour="searching">
             <select value={selectedSearchAlgo || ""} onChange={e => handleSearching(e.target.value)}
               className="appearance-none bg-slate-900/80 border border-amber-700/40 px-3 py-2 pr-8 rounded-xl text-[11px] font-semibold outline-none cursor-pointer text-slate-300 hover:border-amber-500/60 transition-all min-w-[100px]">
-              <option value="" disabled hidden>Searching</option>
-              <option value="Linear Search">Linear Search</option>
-              <option value="Binary Search">Binary Search</option>
-              <option value="Jump Search">Jump Search</option>
-              <option value="Fibonacci Search">Fibonacci Search</option>
-              <option value="Interpolation Search">Interpolation Search</option>
+              <option value="" disabled hidden>{t.searching}</option>
+              <option value="Linear Search">{isBn ? "লিনিয়ার সার্চ" : "Linear Search"}</option>
+              <option value="Binary Search">{isBn ? "বাইনারি সার্চ" : "Binary Search"}</option>
+              <option value="Jump Search">{isBn ? "জাম্প সার্চ" : "Jump Search"}</option>
+              <option value="Fibonacci Search">{isBn ? "ফিবোনাচি সার্চ" : "Fibonacci Search"}</option>
+              <option value="Interpolation Search">{isBn ? "ইন্টারপোলেশন সার্চ" : "Interpolation Search"}</option>
             </select>
             <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
           </div>
           <button onClick={() => setMenuOpen(p => !p)}
             className={`p-2 rounded-xl border transition-all text-xs font-bold flex items-center gap-1.5 flex-shrink-0 ${menuOpen ? "border-blue-500 text-blue-400 bg-blue-500/10" : "border-slate-700 text-slate-400 bg-slate-800/60 hover:text-white"}`}>
-            <Menu size={15} /><span className="text-[10px]">More</span>
+            <Menu size={15} /><span className="text-[10px]">{t.more}</span>
           </button>
           <div className="w-px h-5 bg-slate-700/50" />
           <ThemeBtn size={16} />
+          <LangBtn size={16} />
           <CompilerBtn size={16} />
           <button onClick={() => setShowCode(!showCode)}
             className={`p-2 rounded-xl border transition-all flex-shrink-0 ${showCode ? "bg-blue-500/20 border-blue-500 text-blue-400" : "bg-slate-800/60 border-slate-700 text-slate-500 hover:text-white"}`}>
             <Code2 size={16} />
           </button>
-          <button onClick={() => setShowChat && setShowChat(p => !p)}
+          <button
+            data-tour="chatbot"
+            onClick={() => setShowChat && setShowChat(p => !p)}
             className={`p-2 rounded-xl border transition-all flex-shrink-0 ${showChat ? "bg-emerald-500/20 border-emerald-500 text-emerald-400" : "bg-slate-800/60 border-slate-700 text-slate-500 hover:text-emerald-400"}`}>
             <Bot size={16} />
           </button>
@@ -225,12 +264,15 @@ const Header = ({
         {/* ══ MOBILE ══ */}
         <div className="flex md:hidden items-center gap-1.5">
           <ThemeBtn size={16} />
+          <LangBtn size={16} />
           <CompilerBtn size={16} />
           <button onClick={() => setShowCode(!showCode)}
             className={`p-2 rounded-xl border transition-all ${showCode ? "bg-blue-500/20 border-blue-500 text-blue-400" : "bg-slate-800/60 border-slate-700 text-slate-500"}`}>
             <Code2 size={16} />
           </button>
-          <button onClick={() => setShowChat && setShowChat(p => !p)}
+          <button
+            data-tour="chatbot"
+            onClick={() => setShowChat && setShowChat(p => !p)}
             className={`p-2 rounded-xl border transition-all ${showChat ? "bg-emerald-500/20 border-emerald-500 text-emerald-400" : "bg-slate-800/60 border-slate-700 text-slate-500"}`}>
             <Bot size={16} />
           </button>
@@ -246,73 +288,78 @@ const Header = ({
         <div className="border-t border-slate-800/60 bg-[#060913]/98 backdrop-blur-xl px-4 py-4 max-h-[80vh] overflow-y-auto">
           <div className="max-w-lg mx-auto space-y-3">
 
-            <div>
+            <div data-tour="resources">
               <p className="text-[9px] uppercase tracking-widest text-blue-400 font-bold mb-2 px-1 flex items-center gap-1.5">
-                <BookOpen size={10} /> Learning Resources
+                <BookOpen size={10} /> {isBn ? "শেখার রিসোর্স" : "Learning Resources"}
               </p>
               <MobileSelect value="" onChange={handleResources}
                 borderCls="border-blue-500/30" focusCls="focus:border-blue-500"
-                placeholder="📚 Select Resource">
-                <option value="leetcode-150">LeetCode Problems (100)</option>
-                <option value="c-roadmap">C Language Roadmap</option>
-                <option value="cpp-roadmap">C++ Roadmap</option>
-                <option value="compiler">Online Compiler</option>
+                placeholder={isBn ? "📚 রিসোর্স বেছে নাও" : "📚 Select Resource"}>
+                <option value="leetcode-150">{isBn ? "লিটকোড প্রবলেম (১০০)" : "LeetCode Problems (100)"}</option>
+                <option value="c-roadmap">{isBn ? "C ভাষার রোডম্যাপ" : "C Language Roadmap"}</option>
+                <option value="cpp-roadmap">{isBn ? "C++ রোডম্যাপ" : "C++ Roadmap"}</option>
+                <option value="compiler">{isBn ? "অনলাইন কম্পাইলার" : "Online Compiler"}</option>
               </MobileSelect>
             </div>
 
-            {/* ✅ Mobile compiler shortcut */}
-            <button onClick={() => { setMenuOpen(false); navigate('/compiler'); }}
+            <button
+              data-tour="compiler"
+              onClick={() => { setMenuOpen(false); navigate('/compiler'); }}
               className={`w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-sm border transition-all ${
                 isCompilerPage
                   ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
                   : "bg-slate-900/50 border-slate-700/50 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400"
               }`}>
-              <Terminal size={15} /> Open Compiler
+              <Terminal size={15} /> {t.openCompiler}
             </button>
 
-            <div className="md:hidden">
-              <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">Sorting</p>
+            <div className="md:hidden" data-tour="sorting">
+              <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">{t.sorting}</p>
               <MobileSelect value={selectedAlgo} onChange={handleSorting}
-                borderCls="border-slate-700/50" focusCls="focus:border-blue-500/50" placeholder="Select Sorting">
-                <option value="Bubble Sort">Bubble Sort</option>
-                <option value="Quick Sort">Quick Sort</option>
-                <option value="Insertion Sort">Insertion Sort</option>
-                <option value="Merge Sort">Merge Sort</option>
-                <option value="Selection Sort">Selection Sort</option>
+                borderCls="border-slate-700/50" focusCls="focus:border-blue-500/50"
+                placeholder={isBn ? "সর্টিং বেছে নাও" : "Select Sorting"}>
+                <option value="Bubble Sort">{isBn ? "বাবল সর্ট" : "Bubble Sort"}</option>
+                <option value="Quick Sort">{isBn ? "কুইক সর্ট" : "Quick Sort"}</option>
+                <option value="Insertion Sort">{isBn ? "ইনসার্শন সর্ট" : "Insertion Sort"}</option>
+                <option value="Merge Sort">{isBn ? "মার্জ সর্ট" : "Merge Sort"}</option>
+                <option value="Selection Sort">{isBn ? "সিলেকশন সর্ট" : "Selection Sort"}</option>
               </MobileSelect>
             </div>
 
-            <div className="md:hidden">
-              <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">Searching</p>
+            <div className="md:hidden" data-tour="searching">
+              <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">{t.searching}</p>
               <MobileSelect value={selectedSearchAlgo} onChange={handleSearching}
-                borderCls="border-amber-700/40" focusCls="focus:border-amber-500/70" placeholder="Select Searching">
-                <option value="Linear Search">Linear Search</option>
-                <option value="Binary Search">Binary Search</option>
-                <option value="Jump Search">Jump Search</option>
-                <option value="Fibonacci Search">Fibonacci Search</option>
-                <option value="Interpolation Search">Interpolation Search</option>
+                borderCls="border-amber-700/40" focusCls="focus:border-amber-500/70"
+                placeholder={isBn ? "সার্চিং বেছে নাও" : "Select Searching"}>
+                <option value="Linear Search">{isBn ? "লিনিয়ার সার্চ" : "Linear Search"}</option>
+                <option value="Binary Search">{isBn ? "বাইনারি সার্চ" : "Binary Search"}</option>
+                <option value="Jump Search">{isBn ? "জাম্প সার্চ" : "Jump Search"}</option>
+                <option value="Fibonacci Search">{isBn ? "ফিবোনাচি সার্চ" : "Fibonacci Search"}</option>
+                <option value="Interpolation Search">{isBn ? "ইন্টারপোলেশন সার্চ" : "Interpolation Search"}</option>
               </MobileSelect>
             </div>
 
-            <div>
-              <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">Data Structure</p>
+            <div data-tour="ds">
+              <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">{t.dataStructure}</p>
               <MobileSelect value={selectedPathAlgo} onChange={handleDS}
-                borderCls="border-slate-700/50" focusCls="focus:border-green-500/50" placeholder="Select Data Structure">
-                <option value="Stack">Stack (LIFO)</option>
-                <option value="Queue">Queue (FIFO)</option>
-                <option value="Linked List">Linked List</option>
-                <option value="Double Linked List">Double Linked List</option>
+                borderCls="border-slate-700/50" focusCls="focus:border-green-500/50"
+                placeholder={isBn ? "ডেটা স্ট্রাকচার বেছে নাও" : "Select Data Structure"}>
+                <option value="Stack">{isBn ? "স্ট্যাক (LIFO)" : "Stack (LIFO)"}</option>
+                <option value="Queue">{isBn ? "কিউ (FIFO)" : "Queue (FIFO)"}</option>
+                <option value="Linked List">{isBn ? "লিংকড লিস্ট" : "Linked List"}</option>
+                <option value="Double Linked List">{isBn ? "ডাবল লিংকড লিস্ট" : "Double Linked List"}</option>
               </MobileSelect>
             </div>
 
-            <div>
-              <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">Tree / Graph</p>
+            <div data-tour="tree">
+              <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-1">{t.treeGraph}</p>
               <MobileSelect value={selectedGraphAlgo} onChange={handleGraph}
-                borderCls="border-purple-700/40" focusCls="focus:border-purple-500/70" placeholder="Select Tree / Graph">
-                <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── Tree ──</option>
-                <option value="Tree BFS">Tree BFS (Level Order)</option>
-                <option value="Tree DFS">Tree DFS (Pre-order)</option>
-                <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── Graph ──</option>
+                borderCls="border-purple-700/40" focusCls="focus:border-purple-500/70"
+                placeholder={isBn ? "ট্রি / গ্রাফ বেছে নাও" : "Select Tree / Graph"}>
+                <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── {isBn ? "ট্রি" : "Tree"} ──</option>
+                <option value="Tree BFS">{isBn ? "ট্রি BFS (লেভেল অর্ডার)" : "Tree BFS (Level Order)"}</option>
+                <option value="Tree DFS">{isBn ? "ট্রি DFS (প্রি-অর্ডার)" : "Tree DFS (Pre-order)"}</option>
+                <option disabled style={{ color:"#6366f1", fontWeight:700 }}>── {isBn ? "গ্রাফ" : "Graph"} ──</option>
                 <option value="Graph BFS">Graph BFS</option>
                 <option value="Graph DFS">Graph DFS</option>
               </MobileSelect>
