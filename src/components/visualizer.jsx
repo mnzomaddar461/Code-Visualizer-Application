@@ -4,8 +4,6 @@ import Home from './home';
 import Footer from './Footer';
 import LeetCode from './leedcode';
 import Roadmap from './Roadmap';
-// import { C_CHAPTERS } from './cRoadmap';
-// import { CPP_CHAPTERS } from './cppRoadmap';
 import { C_CHAPTERS, C_RESOURCES } from "./cRoadmap";
 import { CPP_CHAPTERS, CPP_RESOURCES } from "./cppRoadmap";
 import {
@@ -41,7 +39,151 @@ import { getTreeDFSAnimations }  from "../algorithm/treeandgraph/treeDFS";
 import { getGraphBFSAnimations } from "../algorithm/treeandgraph/graphBFS";
 import { getGraphDFSAnimations } from "../algorithm/treeandgraph/graphDFS";
 
+// ✅ শুধু import করো — module level এ useLang() call করা যাবে না
+import { useLang } from './LanguageContext';
+
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+
+// ✅ isBn কে parameter হিসেবে নিয়ে t object return করে এই function
+const getT = (isBn) => ({
+    // Controls panel
+    visualize:       isBn ? "ভিজুয়ালাইজ করো"     : "Visualize",
+    stop:            isBn ? "■ থামাও"              : "■ Stop",
+    speed:           isBn ? "গতি"                  : "Speed",
+    arraySize:       isBn ? "অ্যারের সাইজ"          : "Array Size",
+    customLabel:     isBn ? "নিজে Array দিন"         : "Custom Array",
+    customHint:      isBn ? "Comma দিয়ে সংখ্যা লিখুন, যেমন: 45, 12, 78"
+                          : "Comma-separated numbers, e.g. 45, 12, 78",
+    customPH:        isBn ? "45, 12, 78, 33, 5…"    : "45, 12, 78, 33, 5…",
+    set:             isBn ? "সেট করো"               : "Set",
+    customArr:       (n) => isBn ? `✓ কাস্টম অ্যারে সেট — ${n}টি সংখ্যা` : `✓ Custom array set — ${n} items`,
+    customDisabled:  isBn ? "কাস্টম অ্যারে ব্যবহারে size slider বন্ধ" : "Size slider disabled for custom array",
+    generate:        isBn ? "নতুন Random Array"      : "Generate New Array",
+    reset:           isBn ? "রিসেট"                 : "Reset",
+    custom:          isBn ? "(কাস্টম)"              : "(custom)",
+
+    // Stats
+    progress:        isBn ? "অগ্রগতি"               : "Progress",
+    comparisons:     isBn ? "তুলনা"                 : "Comparisons",
+    swaps:           isBn ? "অদলবদল"                : "Swaps",
+
+    // DS controls
+    insertNode:      isBn ? "নোড যোগ করো"           : "Insert Node",
+    deleteNode:      isBn ? "নোড মুছো"              : "Delete Node",
+
+    // Search controls
+    targetLabel:     isBn ? "লক্ষ্য মান"             : "Target Value",
+    targetPH:        isBn ? "যে সংখ্যা খুঁজবে লিখুন…" : "Enter target number…",
+    customArrOpt:    isBn ? "নিজে Array (ঐচ্ছিক)"    : "Custom Array (optional)",
+    running:         isBn ? "খুঁজছে…"               : "Searching…",
+    run:             (algo) => isBn ? `${algo} চালাও` : `Run ${algo}`,
+    newRandom:       isBn ? "নতুন Random Array"      : "New Random Array",
+    autoSorted:      (algo) => isBn ? `⚠️ ${algo} এর জন্য sorted array দরকার — auto-sort হবে।`
+                                    : `⚠️ ${algo} requires sorted array — auto-sorted.`,
+    sortedNote:      isBn ? "সংখ্যা লিখুন, Comma দিয়ে আলাদা করো"
+                          : "Enter numbers separated by commas",
+
+    // Tree/Graph controls
+    addNode:         isBn ? "নোড যোগ করো"           : "Add Node",
+    addEdge:         isBn ? "Edge যোগ করো"           : "Add Edge",
+    startNode:       isBn ? "শুরুর নোড"              : "Start Node",
+    resetDefault:    isBn ? "ডিফল্টে ফিরে যাও"       : "Reset to Default",
+    runAlgo:         (algo) => isBn ? `${algo} চালাও` : `Run ${algo}`,
+    running2:        isBn ? "চলছে…"                  : "Running…",
+    nodePH:          isBn ? "নোডের মান (যেমন H)"     : "Node value (e.g. H)",
+    noParent:        isBn ? "কোনো parent নেই (নতুন root)" : "No parent (new root)",
+    parent:          (v, id) => isBn ? `Parent: ${v} (id ${id})` : `Parent: ${v} (id ${id})`,
+    editHint:        isBn ? "double-click করে edit করো · × চেপে delete করো"
+                          : "Double-click to edit · Click × to delete",
+    selected:        isBn ? "নির্বাচিত:"              : "Selected:",
+    fromNode:        isBn ? "থেকে"                   : "From",
+    toNode:          isBn ? "পর্যন্ত"                 : "To",
+    deleteHint:      isBn ? "নোড/এজ মুছতে × চাপো"  : "Click × on node/edge to delete",
+    node:            (id) => isBn ? `নোড ${id}`       : `Node ${id}`,
+
+    // How it works
+    howItWorks:      isBn ? "কীভাবে কাজ করে"        : "How it works",
+    stepLog:         isBn ? "ধাপের লগ"               : "Step Log",
+    steps:           (n) => isBn ? `${n}টি ধাপ`      : `${n} steps`,
+    opLog:           isBn ? "অপারেশন লগ"             : "Operation Log",
+
+    // Sidebar header
+    searchControls:  isBn ? "সার্চ কন্ট্রোল"          : "Search Controls",
+    treeEditor:      isBn ? "ট্রি এডিটর"              : "Tree Editor",
+    graphEditor:     isBn ? "গ্রাফ এডিটর"             : "Graph Editor",
+    controls:        isBn ? "কন্ট্রোল"                : "Controls",
+
+    // Interactive area placeholder
+    searchRight:     isBn ? "ইন্টারেক্টিভ সার্চ ভিজুয়ালাইজার ডানে →" : "Interactive Search visualizer is on the right →",
+    treeRight:       isBn ? "ইন্টারেক্টিভ ট্রি এডিটর ডানে →"         : "Interactive Tree editor is on the right →",
+    graphRight:      isBn ? "ইন্টারেক্টিভ গ্রাফ এডিটর ডানে →"        : "Interactive Graph editor is on the right →",
+    searchHint:      isBn ? "একটি সংখ্যা দিয়ে Run চাপো।"              : "Enter a target number and click Run.",
+    buildHint:       isBn ? "structure তৈরি করে Run চাপো।"            : "Build your structure, then click Run.",
+
+    // DS display placeholder
+    dsEmpty:         isBn ? "এখনো কিছু নেই — ডানের কন্ট্রোল থেকে মান যোগ করো"
+                          : "No elements yet — add values using the controls →",
+
+    // Queue/visit
+    queue:           isBn ? "কিউ"         : "Queue",
+    empty:           isBn ? "খালি"        : "empty",
+    visitOrder:      isBn ? "পরিদর্শনের ক্রম" : "Visit Order",
+
+    // DLL legend
+    dllLegend:       isBn ? "পয়েন্টার লিজেন্ড" : "Pointer Legend",
+    next:            isBn ? "next (নীল)"         : "next (blue)",
+    prev:            isBn ? "prev (গোলাপী)"       : "prev (pink)",
+    head:            isBn ? "HEAD (সায়ান)"       : "HEAD (cyan)",
+    tail:            isBn ? "TAIL (অ্যাম্বার)"    : "TAIL (amber)",
+
+    // Legend labels
+    default:         isBn ? "ডিফল্ট"    : "Default",
+    compare:         isBn ? "তুলনা"     : "Compare",
+    pivot_:          isBn ? "পিভট"      : "Pivot",
+    swap_:           isBn ? "অদলবদল"   : "Swap",
+    sorted:          isBn ? "সাজানো"   : "Sorted",
+
+    // Search legend
+    active:          isBn ? "সক্রিয়"     : "Active",
+    checked:         isBn ? "পরীক্ষিত"   : "Checked",
+    midCur:          isBn ? "মধ্য/বর্তমান" : "Mid/Current",
+    found:           isBn ? "পাওয়া গেছে" : "Found",
+    notFound:        isBn ? "পাওয়া যায়নি" : "Not Found",
+    eliminated:      isBn ? "বাদ দেওয়া"  : "Eliminated",
+
+    // Node states
+    unvisited:       isBn ? "পরিদর্শন হয়নি" : "Unvisited",
+    queued:          isBn ? "কিউতে আছে"      : "Queued",
+    visiting:        isBn ? "পরিদর্শন হচ্ছে"  : "Visiting",
+    done:            isBn ? "সম্পন্ন"         : "Done",
+    startLabel:      isBn ? "শুরু"            : "Start",
+
+    // Pseudo code
+    pseudoCode:      isBn ? "ছদ্ম কোড"       : "Pseudo Code",
+
+    // DS node labels
+    stackTop:        isBn ? "▲ উপরে"   : "▲ TOP",
+    queueFront:      isBn ? "সামনে ▶"  : "FRONT ▶",
+    queueRear:       isBn ? "◀ পেছনে" : "◀ REAR",
+    head_:           isBn ? "◆ হেড"    : "◆ HEAD",
+    tail_:           isBn ? "টেইল ◆"   : "TAIL ◆",
+
+    // Sort/search found/notfound
+    foundMsg:        (t, idx) => isBn ? `✅ ${t} পাওয়া গেছে index [${idx}] এ!` : `✅ Found ${t} at index [${idx}]!`,
+    notFoundMsg:     (t) => isBn ? `❌ ${t} অ্যারেতে নেই` : `❌ ${t} not found in array`,
+
+    // drag hint
+    dragHint:        isBn ? "| নোড drag করে সরাও" : "| Drag to move nodes",
+
+    // Custom err messages
+    err_minOne:      isBn ? "অন্তত একটি সংখ্যা দিন।"              : "Please enter at least one number.",
+    err_onlyNum:     isBn ? "শুধু সংখ্যা দিন।"                     : "Enter numbers only.",
+    err_range:       isBn ? "মান 1–999 এর মধ্যে হতে হবে।"          : "Values must be between 1–999.",
+    err_max20:       isBn ? "সর্বোচ্চ 20টি সংখ্যা।"                : "Maximum 20 numbers allowed.",
+    err_onlyNumComma:isBn ? "শুধু সংখ্যা দিন, comma দিয়ে আলাদা করুন।" : "Numbers only, separated by commas.",
+    err_range2:      isBn ? "প্রতিটি মান 1–300 এর মধ্যে হতে হবে।"  : "Each value must be between 1–300.",
+    err_max30:       isBn ? "সর্বোচ্চ 30টি সংখ্যা দেওয়া যাবে।"    : "Maximum 30 numbers allowed.",
+});
 
 /* ════════════════════════════════════════════════════════════
   COMPLEXITY + DESCRIPTIONS
@@ -77,7 +219,6 @@ const ALGO_INFO = {
     about:"Merge Sort divides the array in half recursively until single elements remain, then merges them back in sorted order. It guarantees O(n log n) time but needs O(n) extra space.",
     stepLabels:{ compare:"Comparing elements from two halves", swap:"Writing merged element into position", pivot:"", sorted:"Sub-array fully merged" },
   },
-  /* ── Searching ── */
   "Linear Search": {
     time:"O(n)", space:"O(1)",
     code:"for(i=0; i<n; i++) {\n  if(arr[i] === target)\n    return i;\n}\nreturn -1;",
@@ -103,12 +244,10 @@ const ALGO_INFO = {
     code:"pos = low + ((high-low)/(arr[high]-arr[low]))*(target-arr[low]);\nif(arr[pos]==target) return pos;\nelse if(arr[pos]<target) low=pos+1;\nelse high=pos-1;",
     about:"Interpolation Search estimates where the target might be using a mathematical formula — like how we search in a phone book. Works best on uniformly distributed sorted arrays. Can be faster than Binary Search.",
   },
-  /* ── Data Structures ── */
   "Stack":              { time:"O(1)", space:"O(n)", about:"Stack follows LIFO (Last In, First Out). Think of a stack of plates — you can only add or remove from the top. Operations: Push (add to top), Pop (remove from top)." },
   "Queue":              { time:"O(1)", space:"O(n)", about:"Queue follows FIFO (First In, First Out). Like a line of people — new people join at the rear, and people leave from the front. Operations: Enqueue (add to rear), Dequeue (remove from front)." },
   "Linked List":        { time:"O(n)", space:"O(n)", about:"Linked List stores elements in nodes where each node points to the next. Unlike arrays, nodes are not contiguous in memory. Insertion/deletion is O(1) if you have the reference, but search is O(n)." },
   "Double Linked List": { time:"O(n)", space:"O(n)", about:"Doubly Linked List is like a Linked List but each node has TWO pointers — next (forward) and prev (backward). This allows traversal in both directions and easier deletion." },
-  /* ── Tree & Graph ── */
   "Tree BFS": {
     time:"O(V+E)", space:"O(V)",
     code:"queue = [root]\nwhile queue not empty:\n  node = queue.dequeue()\n  visit(node)\n  for child in node.children:\n    queue.enqueue(child)",
@@ -257,19 +396,23 @@ If the user writes in Bengali, respond in Bengali. Otherwise respond in English.
   STEP DETAIL PANEL
 ════════════════════════════════════════════════════════════ */
 const StepDetailPanel = ({ algo, steps }) => {
+  // ✅ Hook এখন component এর ভেতরে
+  const { isBn } = useLang();
+  const t = getT(isBn);
+
   const info = ALGO_INFO[algo];
   if (!steps.length && !info) return null;
   return (
     <div className="mt-5 space-y-3">
       <div className="bg-[#0a0f1e] rounded-2xl border border-slate-700/40 p-5">
-        <div className="flex items-center gap-2 mb-3 text-slate-400"><BookOpen size={14} className="text-blue-400"/><span className="text-[10px] uppercase tracking-widest font-bold">How it works</span></div>
+        <div className="flex items-center gap-2 mb-3 text-slate-400"><BookOpen size={14} className="text-blue-400"/><span className="text-[10px] uppercase tracking-widest font-bold">{t.howItWorks}</span></div>
         <p className="text-slate-400 text-[13px] leading-relaxed">{info?.about}</p>
       </div>
       {steps.length > 0 && (
         <div className="bg-[#0a0f1e] rounded-2xl border border-slate-700/40 p-5">
           <div className="flex items-center gap-2 mb-3 text-slate-400">
             <Layers size={14} className="text-purple-400"/>
-            <span className="text-[10px] uppercase tracking-widest font-bold">Step Log</span>
+            <span className="text-[10px] uppercase tracking-widest font-bold">{t.stepLog}</span>
             <span className="ml-auto text-[10px] text-slate-600">{steps.length} steps</span>
           </div>
           <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1" style={{ scrollbarWidth:"thin" }}>
@@ -291,6 +434,10 @@ const StepDetailPanel = ({ algo, steps }) => {
   SEARCH VISUALIZER
 ════════════════════════════════════════════════════════════ */
 const SearchVisualizer = ({ algo }) => {
+  // ✅ Hook এখন component এর ভেতরে
+  const { isBn } = useLang();
+  const t = getT(isBn);
+
   const [array, setArray]                   = useState(() => Array.from({length:16},()=>Math.floor(Math.random()*90)+5));
   const [target, setTarget]                 = useState("");
   const [sortedArr, setSortedArr]           = useState([]);
@@ -332,10 +479,10 @@ const SearchVisualizer = ({ algo }) => {
   const applyCustom = () => {
     const parts = customInput.split(",").map(s=>s.trim()).filter(Boolean);
     const nums  = parts.map(Number);
-    if (!parts.length)             { setCustomErr("অন্তত একটি সংখ্যা দিন।"); return; }
-    if (nums.some(isNaN))          { setCustomErr("শুধু সংখ্যা দিন।"); return; }
-    if (nums.some(n=>n<1||n>999)) { setCustomErr("মান 1–999 এর মধ্যে হতে হবে।"); return; }
-    if (nums.length > 20)          { setCustomErr("সর্বোচ্চ 20টি সংখ্যা।"); return; }
+    if (!parts.length)             { setCustomErr(t.err_minOne); return; }
+    if (nums.some(isNaN))          { setCustomErr(t.err_onlyNum); return; }
+    if (nums.some(n=>n<1||n>999)) { setCustomErr(t.err_range); return; }
+    if (nums.length > 20)          { setCustomErr(t.err_max20); return; }
     setCustomErr(""); resetAnim(); setSortedArr([]);
     setArray(nums);
   };
@@ -371,7 +518,7 @@ const SearchVisualizer = ({ algo }) => {
     let liveChecked = [];
 
     animations.forEach((anim, i) => {
-      const t = setTimeout(() => {
+      const timer = setTimeout(() => {
         const [type, a, b] = anim;
 
         if (type === "check") {
@@ -414,7 +561,7 @@ const SearchVisualizer = ({ algo }) => {
 
         if (i === animations.length - 1) setIsRunning(false);
       }, i * DELAY);
-      timersRef.current.push(t);
+      timersRef.current.push(timer);
     });
   };
 
@@ -433,7 +580,6 @@ const SearchVisualizer = ({ algo }) => {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      {/* Array bars */}
       <div className="rounded-2xl bg-[#060d1a] border border-slate-800/50 p-4 flex items-end justify-center gap-1 flex-wrap" style={{minHeight:"200px"}}>
         {displayArr.map((val, idx) => (
           <div key={idx} className="flex flex-col items-center gap-1">
@@ -451,7 +597,6 @@ const SearchVisualizer = ({ algo }) => {
         ))}
       </div>
 
-      {/* Status banner */}
       {(foundIdx !== null || notFound) && (
         <div className={`rounded-xl px-4 py-3 text-sm font-bold text-center border ${
           foundIdx !== null
@@ -462,27 +607,25 @@ const SearchVisualizer = ({ algo }) => {
         </div>
       )}
 
-      {/* Legend */}
       <div className="flex gap-3 flex-wrap text-[10px] font-semibold text-slate-500 justify-center">
-        {[["#3b82f6","Active"],["#f97316","Checked"],["#a855f7","Mid/Current"],["#22c55e","Found"],["#ef4444","Not Found"],["#1e293b","Eliminated"]].map(([c,l]) => (
+        {[["#3b82f6", t.active],["#f97316", t.checked],["#a855f7", t.midCur],["#22c55e", t.found],["#ef4444", t.notFound],["#1e293b", t.eliminated]].map(([c,l]) => (
           <span key={l} className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{background:c}}/>{l}
           </span>
         ))}
       </div>
 
-      {/* Controls */}
       <div className="bg-[#0f1320] rounded-2xl border border-slate-700/40 p-4 space-y-3">
-        <p className="text-[9px] uppercase tracking-widest text-slate-500">Target Value</p>
+        <p className="text-[9px] uppercase tracking-widest text-slate-500">{t.targetLabel}</p>
         <input
           value={target}
           onChange={e => setTarget(e.target.value)}
           onKeyDown={e => e.key==="Enter" && runSearch()}
-          placeholder="যে সংখ্যা খুঁজবে লিখুন…"
+          placeholder={t.targetPH}
           type="number"
           className="w-full bg-slate-900 border border-amber-700/40 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-amber-500 text-slate-200 placeholder-slate-600"
         />
-        <p className="text-[9px] uppercase tracking-widest text-slate-500 pt-1">Custom Array (optional)</p>
+        <p className="text-[9px] uppercase tracking-widest text-slate-500 pt-1">{t.customArrOpt}</p>
         <div className="flex gap-2">
           <input
             value={customInput}
@@ -490,25 +633,25 @@ const SearchVisualizer = ({ algo }) => {
             placeholder="10, 25, 3, 78…"
             className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs outline-none focus:border-amber-500/60 text-slate-200 placeholder-slate-600"
           />
-          <button onClick={applyCustom} className="bg-slate-700 hover:bg-slate-600 px-3 rounded-xl text-xs font-bold text-slate-300 transition active:scale-95">Set</button>
+          <button onClick={applyCustom} className="bg-slate-700 hover:bg-slate-600 px-3 rounded-xl text-xs font-bold text-slate-300 transition active:scale-95">{t.set}</button>
         </div>
         {customErr && <p className="text-[11px] text-red-400">{customErr}</p>}
         {algo !== "Linear Search" && (
-          <p className="text-[10px] text-amber-600/80">⚠️ {algo} requires sorted array — auto-sorted হবে।</p>
+          <p className="text-[10px] text-amber-600/80">{t.autoSorted(algo)}</p>
         )}
       </div>
 
       <button onClick={runSearch} disabled={isRunning || !target.trim()}
         className="w-full bg-amber-600 hover:bg-amber-500 disabled:opacity-50 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-3 transition active:scale-95 text-sm shadow-lg shadow-amber-900/30">
-        <Play size={16} fill="currentColor"/> {isRunning ? "Searching…" : `Run ${algo}`}
+        <Play size={16} fill="currentColor"/> {isRunning ? t.running : t.run(algo)}
       </button>
       <button onClick={generateArray} disabled={isRunning}
         className="w-full border border-slate-700 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-800 text-sm transition disabled:opacity-40">
-        <RefreshCw size={14}/> New Random Array
+        <RefreshCw size={14}/> {t.newRandom}
       </button>
       <button onClick={resetAnim} disabled={isRunning}
         className="w-full border border-slate-700 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-800 text-sm transition disabled:opacity-40">
-        <RotateCcw size={14}/> Reset
+        <RotateCcw size={14}/> {t.reset}
       </button>
 
       <StepDetailPanel algo={algo} steps={searchSteps}/>
@@ -520,6 +663,10 @@ const SearchVisualizer = ({ algo }) => {
   TREE INTERACTIVE VISUALIZER
 ════════════════════════════════════════════════════════════ */
 const TreeVisualizer = ({ algo }) => {
+  // ✅ Hook এখন component এর ভেতরে
+  const { isBn } = useLang();
+  const t = getT(isBn);
+
   const [nodes, setNodes]             = useState(() => DEFAULT_TREE.map(n => ({ ...n, children:[...n.children] })));
   const [nodeStates, setNodeStates]   = useState({});
   const [activeEdges, setActiveEdges] = useState(new Set());
@@ -580,7 +727,7 @@ const TreeVisualizer = ({ algo }) => {
     let liveQueue = [];
 
     anims.forEach((a, i) => {
-      const t = setTimeout(() => {
+      const timer = setTimeout(() => {
         const [type, id1, id2] = a;
         const nodeName = nodeMap[id1]?.value ?? id1;
         const node2Name = nodeMap[id2]?.value ?? id2;
@@ -602,7 +749,7 @@ const TreeVisualizer = ({ algo }) => {
         }
         if (i===anims.length-1) setIsRunning(false);
       }, i*DELAY);
-      timersRef.current.push(t);
+      timersRef.current.push(timer);
     });
   };
 
@@ -653,53 +800,53 @@ const TreeVisualizer = ({ algo }) => {
 
       {algo==="Tree BFS" && isRunning && (
         <div className="bg-[#0f1320] rounded-xl border border-blue-800/40 px-4 py-2.5 flex items-center gap-3">
-          <span className="text-[9px] uppercase tracking-widest text-blue-500 font-bold flex-shrink-0">Queue</span>
+          <span className="text-[9px] uppercase tracking-widest text-blue-500 font-bold flex-shrink-0">{t.queue}</span>
           <div className="flex gap-2 flex-wrap">
-            {queue.length===0 ? <span className="text-slate-600 text-xs">empty</span>
+            {queue.length===0 ? <span className="text-slate-600 text-xs">{t.empty}</span>
               : queue.map((v,i) => <span key={i} className="bg-blue-900/50 border border-blue-700/40 text-blue-300 text-xs font-bold px-2 py-0.5 rounded-lg">{v}</span>)}
           </div>
         </div>
       )}
       {visitLabel && (
         <div className="bg-[#0f1320] rounded-xl border border-slate-700/40 px-4 py-2.5">
-          <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1">Visit Order</p>
+          <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1">{t.visitOrder}</p>
           <p className="text-sm font-bold text-indigo-400 font-mono">{visitLabel}</p>
         </div>
       )}
       <div className="flex gap-3 flex-wrap text-[10px] font-semibold text-slate-500 justify-center">
-        {[["default","Unvisited"],["queued","Queued"],["visiting","Visiting"],["done","Done"],["selected","Selected"]].map(([s,l]) => (
+        {[["default", t.unvisited],["queued", t.queued],["visiting", t.visiting],["done", t.done],["selected", t.selected]].map(([s,l]) => (
           <span key={s} className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full inline-block border" style={{background:NC[s].fill,borderColor:NC[s].stroke}}/>{l}
           </span>
         ))}
       </div>
       <div className="bg-[#0f1320] rounded-2xl border border-slate-700/40 p-4 space-y-3">
-        <p className="text-[9px] uppercase tracking-widest text-slate-500">Add Node</p>
+        <p className="text-[9px] uppercase tracking-widest text-slate-500">{t.addNode}</p>
         <input value={newValue} onChange={e=>setNewValue(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addNode()}
-          placeholder="Node value (e.g. H)"
+          placeholder={t.nodePH}
           className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm outline-none focus:border-purple-500 text-slate-200 placeholder-slate-600"/>
         <select value={parentSel} onChange={e=>setParentSel(e.target.value)}
           className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm outline-none text-slate-300 cursor-pointer">
-          <option value="">No parent (new root)</option>
-          {nodes.map(n => <option key={n.id} value={n.id}>Parent: {n.value} (id {n.id})</option>)}
+          <option value="">{t.noParent}</option>
+          {nodes.map(n => <option key={n.id} value={n.id}>{t.parent(n.value, n.id)}</option>)}
         </select>
         <button onClick={addNode} className="w-full bg-purple-600 hover:bg-purple-500 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 text-sm transition active:scale-95">
-          <Plus size={15}/> Add Node
+          <Plus size={15}/> {t.addNode}
         </button>
         {selNode !== null && (
           <div className="bg-slate-800/50 rounded-xl p-3 border border-slate-700/30 text-xs text-slate-400 space-y-1">
-            <p className="font-bold text-slate-300">Selected: <span className="text-purple-400">{nodeMap[selNode]?.value}</span></p>
-            <p>Double-click node to edit · Click <span className="text-red-400">×</span> to delete</p>
+            <p className="font-bold text-slate-300">{t.selected} <span className="text-purple-400">{nodeMap[selNode]?.value}</span></p>
+            <p>{t.editHint}</p>
           </div>
         )}
       </div>
       <button onClick={runAnim} disabled={isRunning}
         className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-purple-900/30 transition active:scale-95 text-sm">
-        <Play size={16} fill="currentColor"/> {isRunning?"Running…":`Run ${algo}`}
+        <Play size={16} fill="currentColor"/> {isRunning ? t.running2 : t.runAlgo(algo)}
       </button>
       <button onClick={()=>{resetAnim();setNodes(DEFAULT_TREE.map(n=>({...n,children:[...n.children]})));setSelNode(null);}}
         className="w-full border border-slate-700 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-800 text-sm transition">
-        <RotateCcw size={14}/> Reset to Default
+        <RotateCcw size={14}/> {t.resetDefault}
       </button>
       <StepDetailPanel algo={algo} steps={treeSteps}/>
     </div>
@@ -710,6 +857,10 @@ const TreeVisualizer = ({ algo }) => {
   GRAPH INTERACTIVE VISUALIZER
 ════════════════════════════════════════════════════════════ */
 const GraphVisualizer = ({ algo }) => {
+  // ✅ Hook এখন component এর ভেতরে
+  const { isBn } = useLang();
+  const t = getT(isBn);
+
   const [gNodes, setGNodes]             = useState(() => DEFAULT_GRAPH_NODES.map(n=>({...n})));
   const [gEdges, setGEdges]             = useState(() => DEFAULT_GRAPH_EDGES.map(e=>[...e]));
   const [nodeStates, setNodeStates]     = useState({});
@@ -778,7 +929,7 @@ const GraphVisualizer = ({ algo }) => {
     let lq=[];
 
     anims.forEach((a,i) => {
-      const t=setTimeout(()=>{
+      const timer=setTimeout(()=>{
         const [type,id1,id2]=a;
         if (type==="enqueue") {
           lq=[...lq,id1]; setLiveQueue([...lq]);
@@ -798,7 +949,7 @@ const GraphVisualizer = ({ algo }) => {
         }
         if (i===anims.length-1) setIsRunning(false);
       },i*DELAY);
-      timersRef.current.push(t);
+      timersRef.current.push(timer);
     });
   };
 
@@ -834,7 +985,7 @@ const GraphVisualizer = ({ algo }) => {
               <g key={`n-${n.id}`} onMouseDown={e=>onMouseDown(e,n.id)} style={{cursor:dragging===n.id?"grabbing":"grab"}}>
                 <circle cx={n.x} cy={n.y} r={24} fill={c.fill} stroke={c.stroke} strokeWidth={isStart?3:2} style={{transition:"fill 0.3s,stroke 0.3s"}}/>
                 <text x={n.x} y={n.y} textAnchor="middle" dominantBaseline="central" fontSize="13" fontWeight="700" fill={c.text} style={{fontFamily:"monospace",userSelect:"none"}}>{n.id}</text>
-                {isStart && <text x={n.x} y={n.y-32} textAnchor="middle" fontSize="9" fill="#34d399" fontWeight="700">START</text>}
+                {isStart && <text x={n.x} y={n.y-32} textAnchor="middle" fontSize="9" fill="#34d399" fontWeight="700">{t.startLabel}</text>}
                 {!isRunning && (
                   <g onClick={e=>{e.stopPropagation();deleteNode(n.id);}} style={{cursor:"pointer"}}>
                     <circle cx={n.x+18} cy={n.y-18} r={8} fill="#ef4444" stroke="#fca5a5" strokeWidth={1}/>
@@ -848,59 +999,59 @@ const GraphVisualizer = ({ algo }) => {
       </div>
       {algo==="Graph BFS" && isRunning && (
         <div className="bg-[#0f1320] rounded-xl border border-blue-800/40 px-4 py-2.5 flex items-center gap-3">
-          <span className="text-[9px] uppercase tracking-widest text-blue-500 font-bold flex-shrink-0">Queue</span>
+          <span className="text-[9px] uppercase tracking-widest text-blue-500 font-bold flex-shrink-0">{t.queue}</span>
           <div className="flex gap-2 flex-wrap">
-            {liveQueue.length===0 ? <span className="text-slate-600 text-xs">empty</span>
+            {liveQueue.length===0 ? <span className="text-slate-600 text-xs">{t.empty}</span>
               : liveQueue.map((v,i)=><span key={i} className="bg-blue-900/50 border border-blue-700/40 text-blue-300 text-xs font-bold px-2 py-0.5 rounded-lg">{v}</span>)}
           </div>
         </div>
       )}
       {visitLabel && (
         <div className="bg-[#0f1320] rounded-xl border border-slate-700/40 px-4 py-2.5">
-          <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1">Visit Order</p>
+          <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1">{t.visitOrder}</p>
           <p className="text-sm font-bold text-indigo-400 font-mono">{visitLabel}</p>
         </div>
       )}
       <div className="flex gap-3 flex-wrap text-[10px] font-semibold text-slate-500 justify-center">
-        {[["selected","Start"],["queued","Queued"],["visiting","Visiting"],["done","Done"]].map(([s,l])=>(
+        {[["selected", t.startLabel],["queued", t.queued],["visiting", t.visiting],["done", t.done]].map(([s,l])=>(
           <span key={s} className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full inline-block border" style={{background:NC[s].fill,borderColor:NC[s].stroke}}/>{l}
           </span>
         ))}
-        <span className="text-slate-700 text-[9px]">| Drag to move nodes</span>
+        <span className="text-slate-700 text-[9px]">{t.dragHint}</span>
       </div>
       <div className="bg-[#0f1320] rounded-2xl border border-slate-700/40 p-4 space-y-3">
         <div>
-          <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1.5">Start Node</p>
+          <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1.5">{t.startNode}</p>
           <select value={startNode} onChange={e=>{setStartNode(Number(e.target.value));resetAnim();}}
             className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm outline-none text-slate-300 cursor-pointer">
-            {gNodes.map(n=><option key={n.id} value={n.id}>Node {n.id}</option>)}
+            {gNodes.map(n=><option key={n.id} value={n.id}>{t.node(n.id)}</option>)}
           </select>
         </div>
         <button onClick={addNode} className="w-full bg-slate-800 hover:bg-slate-700 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 text-sm transition active:scale-95 text-slate-300 border border-slate-700">
-          <Plus size={14}/> Add Node
+          <Plus size={14}/> {t.addNode}
         </button>
         <div>
-          <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1.5">Add Edge</p>
+          <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1.5">{t.addEdge}</p>
           <div className="flex gap-2">
             <select value={edgeFrom} onChange={e=>setEdgeFrom(e.target.value)} className="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs outline-none text-slate-300 cursor-pointer">
-              <option value="">From</option>{gNodes.map(n=><option key={n.id} value={n.id}>Node {n.id}</option>)}
+              <option value="">{t.fromNode}</option>{gNodes.map(n=><option key={n.id} value={n.id}>{t.node(n.id)}</option>)}
             </select>
             <select value={edgeTo} onChange={e=>setEdgeTo(e.target.value)} className="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs outline-none text-slate-300 cursor-pointer">
-              <option value="">To</option>{gNodes.map(n=><option key={n.id} value={n.id}>Node {n.id}</option>)}
+              <option value="">{t.toNode}</option>{gNodes.map(n=><option key={n.id} value={n.id}>{t.node(n.id)}</option>)}
             </select>
             <button onClick={addEdge} className="bg-purple-600 hover:bg-purple-500 px-3 rounded-xl font-bold text-sm transition active:scale-95"><Plus size={14}/></button>
           </div>
         </div>
-        <p className="text-[10px] text-slate-600">Click <span className="text-red-400">×</span> on node/edge to delete</p>
+        <p className="text-[10px] text-slate-600">{t.deleteHint}</p>
       </div>
       <button onClick={runAnim} disabled={isRunning}
         className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-purple-900/30 transition active:scale-95 text-sm">
-        <Play size={16} fill="currentColor"/> {isRunning?"Running…":`Run ${algo}`}
+        <Play size={16} fill="currentColor"/> {isRunning ? t.running2 : t.runAlgo(algo)}
       </button>
       <button onClick={()=>{resetAnim();setGNodes(DEFAULT_GRAPH_NODES.map(n=>({...n})));setGEdges(DEFAULT_GRAPH_EDGES.map(e=>[...e]));setStartNode(0);}}
         className="w-full border border-slate-700 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-800 text-sm transition">
-        <RotateCcw size={14}/> Reset to Default
+        <RotateCcw size={14}/> {t.resetDefault}
       </button>
       <StepDetailPanel algo={algo} steps={graphSteps}/>
     </div>
@@ -911,16 +1062,20 @@ const GraphVisualizer = ({ algo }) => {
   DS STEP LOG
 ════════════════════════════════════════════════════════════ */
 const DSStepLog = ({ algo, log }) => {
+  // ✅ Hook এখন component এর ভেতরে
+  const { isBn } = useLang();
+  const t = getT(isBn);
+
   const info = ALGO_INFO[algo];
   return (
     <div className="mt-5 space-y-3">
       <div className="bg-[#0a0f1e] rounded-2xl border border-slate-700/40 p-5">
-        <div className="flex items-center gap-2 mb-3 text-slate-400"><BookOpen size={14} className="text-green-400"/><span className="text-[10px] uppercase tracking-widest font-bold">How it works</span></div>
+        <div className="flex items-center gap-2 mb-3 text-slate-400"><BookOpen size={14} className="text-green-400"/><span className="text-[10px] uppercase tracking-widest font-bold">{t.howItWorks}</span></div>
         <p className="text-slate-400 text-[13px] leading-relaxed">{info?.about}</p>
       </div>
       {log.length > 0 && (
         <div className="bg-[#0a0f1e] rounded-2xl border border-slate-700/40 p-5">
-          <div className="flex items-center gap-2 mb-3"><Layers size={14} className="text-purple-400"/><span className="text-[10px] uppercase tracking-widest font-bold text-slate-400">Operation Log</span></div>
+          <div className="flex items-center gap-2 mb-3"><Layers size={14} className="text-purple-400"/><span className="text-[10px] uppercase tracking-widest font-bold text-slate-400">{t.opLog}</span></div>
           <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
             {log.map((entry,i) => (
               <div key={i} className={`flex items-start gap-2.5 rounded-xl px-3 py-2 text-[12px] ${i===log.length-1?"bg-slate-700/50 border border-slate-600/50":"bg-slate-900/40"}`}>
@@ -951,6 +1106,10 @@ const isSearchAlgo = (a) => ["Linear Search","Binary Search","Jump Search","Fibo
   MAIN COMPONENT
 ════════════════════════════════════════════════════════════ */
 const Visualizer = () => {
+  // ✅ Hook এখন সবার উপরে — component এর ভেতরে
+  const { isBn } = useLang();
+  const t = getT(isBn);
+
   const [activePage,         setActivePage]         = useState("visualizer");
   const [selectedAlgo,       setSelectedAlgo]       = useState("");
   const [selectedPathAlgo,   setSelectedPathAlgo]   = useState("");
@@ -1011,10 +1170,10 @@ const Visualizer = () => {
   const applyCustomArray = () => {
     const parts = customInput.split(",").map(s=>s.trim()).filter(Boolean);
     const nums = parts.map(Number);
-    if (parts.length===0) { setCustomInputErr("অন্তত একটি সংখ্যা দিন।"); return; }
-    if (nums.some(isNaN)) { setCustomInputErr("শুধু সংখ্যা দিন, comma দিয়ে আলাদা করুন।"); return; }
-    if (nums.some(n=>n<1||n>300)) { setCustomInputErr("প্রতিটি মান 1–300 এর মধ্যে হতে হবে।"); return; }
-    if (nums.length>30) { setCustomInputErr("সর্বোচ্চ 30টি সংখ্যা দেওয়া যাবে।"); return; }
+    if (parts.length===0) { setCustomInputErr(t.err_minOne); return; }
+    if (nums.some(isNaN)) { setCustomInputErr(t.err_onlyNumComma); return; }
+    if (nums.some(n=>n<1||n>300)) { setCustomInputErr(t.err_range2); return; }
+    if (nums.length>30) { setCustomInputErr(t.err_max30); return; }
     setCustomInputErr("");
     clearTimeouts(); resetVisual();
     setArray(nums); setArraySize(nums.length); setUseCustomArray(true);
@@ -1049,7 +1208,7 @@ const Visualizer = () => {
     const workArr=[...snap];let liveC=0,liveS=0;
 
     anims.forEach((anim,i)=>{
-      const t=setTimeout(()=>{
+      const timer=setTimeout(()=>{
         if(!isSortingRef.current) return;
         const [type,i1,i2,v1,v2]=anim;
         setCurrentStep(i+1);
@@ -1084,7 +1243,7 @@ const Visualizer = () => {
           },delay+120);
         }
       },i*delay);
-      timeoutsRef.current.push(t);
+      timeoutsRef.current.push(timer);
     });
   };
   const handleStop=()=>{isSortingRef.current=false;setIsSorting(false);clearTimeouts();resetVisual();};
@@ -1148,34 +1307,29 @@ const Visualizer = () => {
         activePage={activePage}                 setActivePage={setActivePage}
       />
 
-      {/* ── Page routing ── */}
-      {/* {activePage === "leetcode" && <LeetCode/>}
-      {activePage === "c"        && <Roadmap chapters={C_CHAPTERS}   accentColor="blue"   title="C Programming" subtitle="C language এর basics থেকে advanced পর্যন্ত — beginners দের জন্য।"   icon="🔵"/>}
-      {activePage === "cpp"      && <Roadmap chapters={CPP_CHAPTERS} accentColor="purple" title="C++ Programming" subtitle="C++ এর OOP, STL, Templates সহ সম্পূর্ণ roadmap।" icon="🟣"/>} */}
-
       {activePage === "leetcode" && <LeetCode/>}
 
-{activePage === "c" && (
-  <Roadmap 
-    chapters={C_CHAPTERS}
-    resources={C_RESOURCES}
-    accentColor="blue" 
-    title="C Programming" 
-    subtitle="C language এর basics থেকে advanced পর্যন্ত — beginners দের জন্য।"
-    icon="🔵"
-  />
-)}
+      {activePage === "c" && (
+        <Roadmap
+          chapters={C_CHAPTERS}
+          resources={C_RESOURCES}
+          accentColor="blue"
+          title="C Programming"
+          subtitle="C language এর basics থেকে advanced পর্যন্ত — beginners দের জন্য।"
+          icon="🔵"
+        />
+      )}
 
-{activePage === "cpp" && (
-  <Roadmap 
-    chapters={CPP_CHAPTERS}
-    resources={CPP_RESOURCES}
-    accentColor="purple" 
-    title="C++ Programming" 
-    subtitle="C++ এর OOP, STL, Templates সহ সম্পূর্ণ roadmap।"
-    icon="🟣"
-  />
-)}
+      {activePage === "cpp" && (
+        <Roadmap
+          chapters={CPP_CHAPTERS}
+          resources={CPP_RESOURCES}
+          accentColor="purple"
+          title="C++ Programming"
+          subtitle="C++ এর OOP, STL, Templates সহ সম্পূর্ণ roadmap।"
+          icon="🟣"
+        />
+      )}
 
       {activePage === "visualizer" && <main className="pt-28 px-6 max-w-7xl mx-auto w-full flex-grow mb-10">
         {activeAlgo ? (
@@ -1192,11 +1346,11 @@ const Visualizer = () => {
                   </div>
                   {selectedAlgo && (
                     <div className="flex flex-wrap gap-3 text-[10px] font-semibold text-slate-400">
-                      <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-blue-500 inline-block"/> Default</span>
-                      <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-red-500 inline-block"/> Compare</span>
-                      <span className="flex items-center gap-1.5"><Pin size={11} className="text-yellow-400"/> Pivot</span>
-                      <span className="flex items-center gap-1.5"><ArrowRightLeft size={11} className="text-purple-400"/> Swap</span>
-                      <span className="flex items-center gap-1.5"><SquareCheck size={11} className="text-green-400"/> Sorted</span>
+                      <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-blue-500 inline-block"/> {t.default}</span>
+                      <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-red-500 inline-block"/> {t.compare}</span>
+                      <span className="flex items-center gap-1.5"><Pin size={11} className="text-yellow-400"/> {t.pivot_}</span>
+                      <span className="flex items-center gap-1.5"><ArrowRightLeft size={11} className="text-purple-400"/> {t.swap_}</span>
+                      <span className="flex items-center gap-1.5"><SquareCheck size={11} className="text-green-400"/> {t.sorted}</span>
                     </div>
                   )}
                 </div>
@@ -1206,16 +1360,16 @@ const Visualizer = () => {
                 {selectedAlgo && (
                   <div className="grid grid-cols-3 gap-3 mb-5">
                     <div className="bg-[#0f1320] rounded-2xl border border-slate-700/40 p-4">
-                      <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1">Progress</p>
+                      <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1">{t.progress}</p>
                       <p className="text-xl font-bold text-blue-400">{pct}<span className="text-xs font-normal text-slate-500">%</span></p>
                       <div className="mt-2 h-1 rounded-full bg-slate-800 overflow-hidden"><div className="h-full bg-blue-500 rounded-full transition-all duration-100" style={{width:`${pct}%`}}/></div>
                     </div>
                     <div className="bg-[#0f1320] rounded-2xl border border-slate-700/40 p-4">
-                      <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1 flex items-center gap-1"><GitCompare size={10}/> Comparisons</p>
+                      <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1 flex items-center gap-1"><GitCompare size={10}/> {t.comparisons}</p>
                       <p className="text-xl font-bold text-red-400">{stepStats.compares}</p>
                     </div>
                     <div className="bg-[#0f1320] rounded-2xl border border-slate-700/40 p-4">
-                      <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1 flex items-center gap-1"><ArrowRightLeft size={10}/> Swaps</p>
+                      <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-1 flex items-center gap-1"><ArrowRightLeft size={10}/> {t.swaps}</p>
                       <p className="text-xl font-bold text-purple-400">{stepStats.swaps}</p>
                     </div>
                   </div>
@@ -1227,12 +1381,11 @@ const Visualizer = () => {
                     <div className="text-slate-600 text-sm text-center select-none">
                       <p className="text-3xl mb-2">{isSearchAlgo(activeAlgo)?"🔍":"👉"}</p>
                       <p className="text-slate-500">
-                        {isSearchAlgo(activeAlgo)
-                          ? "Interactive Search visualizer is on the right →"
-                          : `Interactive ${isTreeAlgo(activeAlgo)?"Tree":"Graph"} editor is on the right →`}
+                        {isSearchAlgo(activeAlgo) ? t.searchRight
+                          : isTreeAlgo(activeAlgo) ? t.treeRight : t.graphRight}
                       </p>
                       <p className="text-xs mt-1 text-slate-700">
-                        {isSearchAlgo(activeAlgo) ? "Enter a target number and click Run." : "Build your structure, then click Run."}
+                        {isSearchAlgo(activeAlgo) ? t.searchHint : t.buildHint}
                       </p>
                     </div>
                   ) : selectedPathAlgo ? (
@@ -1240,7 +1393,7 @@ const Visualizer = () => {
                     <div className={`flex ${selectedPathAlgo==="Stack"?"flex-col-reverse items-center":"flex-row flex-wrap items-center"} py-4`}
                       style={{gap:isListType?"0":"12px"}}>
                       {dsData.length===0 ? (
-                        <p className="text-slate-600 text-sm w-full text-center select-none">No elements yet — add values using the controls →</p>
+                        <p className="text-slate-600 text-sm w-full text-center select-none">{t.dsEmpty}</p>
                       ) : (
                         dsData.map((val,i)=>{
                           const isStackTop=selectedPathAlgo==="Stack"&&i===dsData.length-1;
@@ -1268,7 +1421,7 @@ const Visualizer = () => {
                               </div>
                               <span className="mt-1.5 text-[10px] font-bold uppercase tracking-wider"
                                 style={{minHeight:"14px",color:isStackTop?"#fb923c":isQueueFront?"#34d399":isQueueRear?"#a78bfa":isDLL(selectedPathAlgo)&&isFirst?"#22d3ee":isDLL(selectedPathAlgo)&&isLast?"#fbbf24":"transparent"}}>
-                                {isStackTop?"▲ TOP":isQueueFront?"FRONT ▶":isQueueRear?"◀ REAR":isDLL(selectedPathAlgo)&&isFirst?"◆ HEAD":isDLL(selectedPathAlgo)&&isLast?"TAIL ◆":""}
+                                {isStackTop ? t.stackTop : isQueueFront ? t.queueFront : isQueueRear ? t.queueRear : isDLL(selectedPathAlgo)&&isFirst ? t.head_ : isDLL(selectedPathAlgo)&&isLast ? t.tail_ : ""}
                               </span>
                             </div>
                           );
@@ -1293,7 +1446,7 @@ const Visualizer = () => {
 
                 {showCode&&ALGO_INFO[activeAlgo]?.code&&(
                   <div className="mt-5 bg-slate-950 p-5 rounded-2xl border border-slate-800 font-mono text-sm">
-                    <div className="flex items-center gap-2 mb-3 text-slate-500 border-b border-slate-800 pb-2"><Code2 size={14}/><span className="text-[11px] uppercase tracking-widest">Pseudo Code</span></div>
+                    <div className="flex items-center gap-2 mb-3 text-slate-500 border-b border-slate-800 pb-2"><Code2 size={14}/><span className="text-[11px] uppercase tracking-widest">{t.pseudoCode}</span></div>
                     <pre className="text-blue-300 leading-relaxed whitespace-pre-wrap text-[13px]">{ALGO_INFO[activeAlgo]?.code}</pre>
                   </div>
                 )}
@@ -1308,9 +1461,9 @@ const Visualizer = () => {
             <div className={(isTG(activeAlgo)||isSearchAlgo(activeAlgo))?"lg:col-span-2":""}>
               <div className="bg-[#0b0e17] p-7 rounded-[2rem] border border-slate-800 shadow-2xl space-y-6 sticky top-28">
                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                  {isSearchAlgo(activeAlgo) ? "Search Controls"
-                    : isTG(activeAlgo) ? (isTreeAlgo(activeAlgo)?"Tree Editor":"Graph Editor")
-                    : "Controls"}
+                  {isSearchAlgo(activeAlgo) ? t.searchControls
+                    : isTG(activeAlgo) ? (isTreeAlgo(activeAlgo) ? t.treeEditor : t.graphEditor)
+                    : t.controls}
                 </h3>
 
                 {isSearchAlgo(activeAlgo) ? <SearchVisualizer algo={activeAlgo}/>
@@ -1326,58 +1479,58 @@ const Visualizer = () => {
                     {selectedPathAlgo==="Double Linked List" && <input type="text" value={dllInput} onChange={e=>setDllInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleDSUpdate("add")} placeholder="DLL node value…" className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm outline-none focus:border-cyan-500 text-slate-200 placeholder-slate-600"/>}
                     {isDLL(selectedPathAlgo) && (
                       <div className="bg-slate-900/60 rounded-xl p-3 border border-slate-700/40 space-y-1.5">
-                        <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-2">Pointer Legend</p>
-                        <div className="flex items-center gap-2 text-[11px] text-slate-400"><span style={{color:"#60a5fa",fontSize:"14px",fontWeight:"900"}}>→</span><span>next (blue)</span></div>
-                        <div className="flex items-center gap-2 text-[11px] text-slate-400"><span style={{color:"#f472b6",fontSize:"14px",fontWeight:"900"}}>←</span><span>prev (pink)</span></div>
-                        <div className="flex items-center gap-2 text-[11px] text-slate-400"><span className="w-3 h-3 rounded-sm inline-block" style={{background:"linear-gradient(135deg,#06b6d4,#0891b2)"}}/><span>HEAD (cyan)</span></div>
-                        <div className="flex items-center gap-2 text-[11px] text-slate-400"><span className="w-3 h-3 rounded-sm inline-block" style={{background:"linear-gradient(135deg,#f59e0b,#d97706)"}}/><span>TAIL (amber)</span></div>
+                        <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-2">{t.dllLegend}</p>
+                        <div className="flex items-center gap-2 text-[11px] text-slate-400"><span style={{color:"#60a5fa",fontSize:"14px",fontWeight:"900"}}>→</span><span>{t.next}</span></div>
+                        <div className="flex items-center gap-2 text-[11px] text-slate-400"><span style={{color:"#f472b6",fontSize:"14px",fontWeight:"900"}}>←</span><span>{t.prev}</span></div>
+                        <div className="flex items-center gap-2 text-[11px] text-slate-400"><span className="w-3 h-3 rounded-sm inline-block" style={{background:"linear-gradient(135deg,#06b6d4,#0891b2)"}}/><span>{t.head}</span></div>
+                        <div className="flex items-center gap-2 text-[11px] text-slate-400"><span className="w-3 h-3 rounded-sm inline-block" style={{background:"linear-gradient(135deg,#f59e0b,#d97706)"}}/><span>{t.tail}</span></div>
                       </div>
                     )}
-                    <button onClick={()=>handleDSUpdate("add")} className="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold flex items-center justify-center gap-2 text-sm transition active:scale-95"><Plus size={16}/> Insert Node</button>
-                    <button onClick={()=>handleDSUpdate("remove")} className="w-full border border-red-500/25 text-red-400 py-3 rounded-xl font-bold flex items-center justify-center gap-2 text-sm hover:bg-red-500/10 transition"><Trash2 size={16}/> Delete Node</button>
-                    <button onClick={()=>{setDsData([]);setDsLog([]);}} className="w-full border border-slate-700 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-800 text-sm transition"><RotateCcw size={16}/> Reset</button>
+                    <button onClick={()=>handleDSUpdate("add")} className="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold flex items-center justify-center gap-2 text-sm transition active:scale-95"><Plus size={16}/> {t.insertNode}</button>
+                    <button onClick={()=>handleDSUpdate("remove")} className="w-full border border-red-500/25 text-red-400 py-3 rounded-xl font-bold flex items-center justify-center gap-2 text-sm hover:bg-red-500/10 transition"><Trash2 size={16}/> {t.deleteNode}</button>
+                    <button onClick={()=>{setDsData([]);setDsLog([]);}} className="w-full border border-slate-700 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-800 text-sm transition"><RotateCcw size={16}/> {t.reset}</button>
                   </div>
 
                 ) : (
                   /* ── SORTING CONTROLS ── */
                   <div className="space-y-5">
                     <div className="bg-[#0f1320] rounded-2xl border border-slate-700/40 p-4 space-y-2">
-                      <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold">নিজে Array দিন</p>
-                      <p className="text-[10px] text-slate-600">Comma দিয়ে সংখ্যা লিখুন, যেমন: 45, 12, 78, 33</p>
+                      <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold">{t.customLabel}</p>
+                      <p className="text-[10px] text-slate-600">{t.customHint}</p>
                       <div className={`flex items-center bg-slate-900 border rounded-xl overflow-hidden transition ${customInputErr?"border-red-500/60":"border-slate-700 focus-within:border-blue-500/70"}`}>
                         <input type="text" value={customInput}
                           onChange={e=>{setCustomInput(e.target.value);setCustomInputErr("");}}
                           onKeyDown={e=>e.key==="Enter"&&applyCustomArray()}
-                          placeholder="45, 12, 78, 33, 5…" disabled={isSorting}
+                          placeholder={t.customPH} disabled={isSorting}
                           className="flex-1 bg-transparent px-3 py-2.5 text-sm outline-none text-slate-200 placeholder-slate-600 disabled:opacity-40"/>
                         <button onClick={applyCustomArray} disabled={isSorting||!customInput.trim()}
-                          className="h-full px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-xs font-bold tracking-wide border-l border-slate-700 transition active:scale-95 flex-shrink-0">Set</button>
+                          className="h-full px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-xs font-bold tracking-wide border-l border-slate-700 transition active:scale-95 flex-shrink-0">{t.set}</button>
                       </div>
                       {customInputErr && <p className="text-[11px] text-red-400">{customInputErr}</p>}
-                      {useCustomArray && !customInputErr && <p className="text-[11px] text-emerald-400">✓ Custom array set — {array.length}টি সংখ্যা</p>}
+                      {useCustomArray && !customInputErr && <p className="text-[11px] text-emerald-400">{t.customArr(array.length)}</p>}
                     </div>
 
                     {!isSorting ? (
-                      <button onClick={handleSort} className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-blue-900/30 transition active:scale-95"><Play size={18} fill="currentColor"/> Visualize</button>
+                      <button onClick={handleSort} className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-blue-900/30 transition active:scale-95"><Play size={18} fill="currentColor"/> {t.visualize}</button>
                     ) : (
-                      <button onClick={handleStop} className="w-full bg-red-600 hover:bg-red-500 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition active:scale-95"><span>■</span> Stop</button>
+                      <button onClick={handleStop} className="w-full bg-red-600 hover:bg-red-500 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition active:scale-95"><span>■</span> {t.stop}</button>
                     )}
                     <div className="space-y-2">
-                      <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wide"><span>Speed</span><span>{speed}%</span></div>
+                      <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wide"><span>{t.speed}</span><span>{speed}%</span></div>
                       <input type="range" min="10" max="100" value={speed} onChange={e=>setSpeed(Number(e.target.value))} disabled={isSorting} className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-40"/>
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wide">
-                        <span>Array Size</span><span>{useCustomArray?`${array.length} (custom)`:arraySize}</span>
+                        <span>{t.arraySize}</span><span>{useCustomArray?`${array.length} ${t.custom}`:arraySize}</span>
                       </div>
                       <input type="range" min="5" max="30" value={useCustomArray?array.length:arraySize}
                         onChange={e=>{setArraySize(Number(e.target.value));setUseCustomArray(false);setCustomInput("");}}
                         disabled={isSorting||useCustomArray}
                         className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-40"/>
-                      {useCustomArray && <p className="text-[10px] text-slate-600">Custom array ব্যবহারে size slider disabled</p>}
+                      {useCustomArray && <p className="text-[10px] text-slate-600">{t.customDisabled}</p>}
                     </div>
-                    <button onClick={resetArray} disabled={isSorting} className="w-full bg-slate-800/50 hover:bg-slate-800 py-3 rounded-xl text-[11px] font-bold uppercase text-slate-300 flex items-center justify-center gap-2 border border-slate-700/50 transition disabled:opacity-40"><RefreshCw size={14}/> Generate New Array</button>
-                    <button onClick={()=>{handleStop();setTimeout(resetArray,60);}} className="w-full border border-slate-700 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-800 text-sm transition"><RotateCcw size={16}/> Reset</button>
+                    <button onClick={resetArray} disabled={isSorting} className="w-full bg-slate-800/50 hover:bg-slate-800 py-3 rounded-xl text-[11px] font-bold uppercase text-slate-300 flex items-center justify-center gap-2 border border-slate-700/50 transition disabled:opacity-40"><RefreshCw size={14}/> {t.generate}</button>
+                    <button onClick={()=>{handleStop();setTimeout(resetArray,60);}} className="w-full border border-slate-700 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-800 text-sm transition"><RotateCcw size={16}/> {t.reset}</button>
                   </div>
                 )}
               </div>
@@ -1407,9 +1560,8 @@ const Visualizer = () => {
         ::-webkit-scrollbar-track{background:transparent;}
         ::-webkit-scrollbar-thumb{background:#334155;border-radius:4px;}
       `}</style>
-      {/* <Footer/> */}
     </div>
   );
 };
-// test for our team member
+
 export default Visualizer;

@@ -297,10 +297,10 @@ const LayoutInner = () => {
 };
 
 /* ══ LAYOUT — LanguageProvider দিয়ে wrap করা ══ */
-const Layout = () => (
-  <LanguageProvider>
-    <LayoutInner />
-  </LanguageProvider>
-);
-
+// const Layout = () => (
+//   <LanguageProvider>
+//     <LayoutInner />
+//   </LanguageProvider>
+// );
+const Layout = LayoutInner;
 export default Layout;

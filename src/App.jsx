@@ -8,12 +8,14 @@ import Compiler from './components/Compiler';
 import { C_CHAPTERS, C_RESOURCES } from './components/cRoadmap';
 import { CPP_CHAPTERS, CPP_RESOURCES } from './components/cppRoadmap';
 import DocumentPage from './components/DocumentPage';
+import { LanguageProvider } from './components/LanguageContext';
 
 // ✅ OnboardingTour এখান থেকে সরানো হয়েছে — Layout.jsx এ নিয়ে যাওয়া হয়েছে
 
 function App() {
   return (
     <BrowserRouter>
+    <LanguageProvider>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<SortingVisualizer />} />
@@ -48,6 +50,7 @@ function App() {
         </Route>
         <Route path="documentation" element={<DocumentPage />} />
       </Routes>
+      </LanguageProvider>
     </BrowserRouter>
   );
 }
