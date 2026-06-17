@@ -31,7 +31,7 @@ export function getBubbleSortAnimations(array) {
   const animations = [];
   const arr = [...array];
   const n = arr.length;
-
+  // test 
   for (let i = 0; i < n - 1; i++) {
     for (let j = 0; j < n - i - 1; j++) {
       // তুলনা
