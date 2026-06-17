@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { LEETCODE_PROBLEMS, CATEGORIES, DIFFICULTIES } from './leetcodeData';
 import { ExternalLink, Search, Tag, BarChart2, Filter, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useLang } from './LanguageContext';
+import { useLang } from './Languagecontext';
 
 const diffColor = {
   Easy:   { bg:"bg-green-900/40",  border:"border-green-500/30",  text:"text-green-400"  },

@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Header from './header';
 import Footer from './Footer';
-import OnboardingTour from './OnboardingTour';
-import { LanguageProvider } from './LanguageContext';
+import OnboardingTour from './Onboardingtour';
+import { LanguageProvider } from './Languagecontext';
 import { Bot, Send, X, Sparkles, Trash2 } from 'lucide-react';
-import { useTheme } from './ThemeContext';
+import { useTheme } from './Themecontext';
 import { Client } from '@gradio/client';
 
 const HF_SPACE = "codevigo/VisualizerAI-App";

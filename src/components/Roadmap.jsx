@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ResourcesHub from './ResourcesHub';
+import ResourcesHub from './Resourceshub';
 import { useLang } from './LanguageContext';
 import {
   CheckCircle, ChevronRight, RotateCcw, ChevronUp, Sparkles,
