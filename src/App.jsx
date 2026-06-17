@@ -8,7 +8,7 @@ import Compiler from './components/Compiler';
 import { C_CHAPTERS, C_RESOURCES } from './components/cRoadmap';
 import { CPP_CHAPTERS, CPP_RESOURCES } from './components/cppRoadmap';
 import DocumentPage from './components/DocumentPage';
-import { LanguageProvider } from './components/LanguageContext';
+import { LanguageProvider } from './components/Languagecontext';
 
 // ✅ OnboardingTour এখান থেকে সরানো হয়েছে — Layout.jsx এ নিয়ে যাওয়া হয়েছে
 
