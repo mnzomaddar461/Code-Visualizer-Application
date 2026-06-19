@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: '/algo-viz-pro/', // <--- এখানে আপনার সঠিক GitHub Repository-র নাম লিখবেন (দুপাশে স্ল্যাশ থাকবে)
+  base: '/Code-Visualizer-Application/', 
 })
