@@ -8,11 +8,16 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: '/Code-Visualizer-Application/', // আপনার সঠিক GitHub Repository-র নাম
+  base: '/Code-Visualizer-Application/',
   build: {
-    // জটিলতা এড়াতে মিনিফিকেশন ডিফল্ট রাখা হলো
-    minify: true,
-    // প্রোডাকশন বিল্ডে কোনো ধরণের সোর্স-ম্যাপ তৈরি হবে না যা eval বা CSP ট্রিগার করতে পারে
-    sourcemap: false,
+    minify: 'terser', 
+    terserOptions: {
+      compress: {
+        
+        unsafe: false, 
+        unsafe_comps: false,
+      },
+    },
+    sourcemap: false, 
   }
 })
