@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useLang } from "./LanguageContext";
+import { useLang } from "./Languagecontext";
 
 const DocumentPage = () => {
   const navigate = useNavigate();

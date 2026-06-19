@@ -1,6 +1,6 @@
 import React from 'react';
 import { BarChart3, Binary, GitGraphIcon, SearchCode, Puzzle, Terminal } from 'lucide-react';
-import { useTheme } from './ThemeContext';
+import { useTheme } from './Themecontext';
 import { useNavigate } from 'react-router-dom';
 
 const iconStyles = {

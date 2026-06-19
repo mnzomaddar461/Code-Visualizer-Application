@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ResourcesHub from './Resourceshub';
-import { useLang } from './LanguageContext';
+import { useLang } from './Languagecontext';
 import {
   CheckCircle, ChevronRight, RotateCcw, ChevronUp, Sparkles,
   Rocket, Package, Zap, GitBranch, RefreshCw, Puzzle,

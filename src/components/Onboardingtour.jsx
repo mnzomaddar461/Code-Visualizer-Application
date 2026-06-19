@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ArrowRight, ArrowLeft, X, Check, Download } from "lucide-react";
-import { useLang } from "./LanguageContext";
+import { useLang } from "./Languagecontext";
 
 const STORAGE_KEY = "algoviz_tour_done";
 

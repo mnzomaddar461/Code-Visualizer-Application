@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Code2, ChevronDown, Bot, Menu, X, BookOpen, Sun, Moon, Terminal } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useTheme } from './ThemeContext';
-import { useLang } from './LanguageContext';
+import { useTheme } from './Themecontext';
+import { useLang } from './Languagecontext';
 
 const Header = ({
   selectedAlgo,         setSelectedAlgo,
