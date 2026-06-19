@@ -8,16 +8,11 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: '/Code-Visualizer-Application/', // আপনার রিপোজিটরির নাম অনুযায়ী সঠিক বেস পাথ
+  base: '/Code-Visualizer-Application/', // আপনার সঠিক GitHub Repository-র নাম
   build: {
-    // Rolldown/Terser-কে ডাইনামিক গ্লোবাল অবজেক্ট বা eval ট্রিক জেনারেট করতে নিষেধ করা হচ্ছে
-    minify: 'esbuild', 
+    // জটিলতা এড়াতে মিনিফিকেশন ডিফল্ট রাখা হলো
+    minify: true,
+    // প্রোডাকশন বিল্ডে কোনো ধরণের সোর্স-ম্যাপ তৈরি হবে না যা eval বা CSP ট্রিগার করতে পারে
     sourcemap: false,
-    rollupOptions: {
-      output: {
-        // এটি জাভাস্ক্রিপ্ট বিল্ডকে একদম ক্লিন এবং সাধারণ ফরম্যাটে রাখবে
-        format: 'es',
-      }
-    }
   }
 })
