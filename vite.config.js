@@ -8,16 +8,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: '/Code-Visualizer-Application/',
+  base: '/Code-Visualizer-Application/', // আপনার সঠিক Repository নাম
   build: {
-    minify: 'terser', 
-    terserOptions: {
-      compress: {
-        
-        unsafe: false, 
-        unsafe_comps: false,
-      },
-    },
-    sourcemap: false, 
+    // মিনিফিকেশন পুরোপুরি বন্ধ করে দেওয়া হলো, যাতে গিটহাব কোনো কিছুতেই eval সন্দেহ না করতে পারে
+    minify: false,
+    sourcemap: false,
   }
 })
