@@ -40,7 +40,7 @@ import { getGraphBFSAnimations } from "../algorithm/treeandgraph/graphBFS";
 import { getGraphDFSAnimations } from "../algorithm/treeandgraph/graphDFS";
 
 // ✅ শুধু import করো — module level এ useLang() call করা যাবে না
-import { useLang } from './LanguageContext';
+import { useLang } from './Languagecontext';
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
