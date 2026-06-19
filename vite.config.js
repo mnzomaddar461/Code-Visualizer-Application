@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: '/Code-Visualizer-Application/', // আপনার সঠিক Repository নাম
+  // base: '/Code-Visualizer-Application/', 
   build: {
     // মিনিফিকেশন পুরোপুরি বন্ধ করে দেওয়া হলো, যাতে গিটহাব কোনো কিছুতেই eval সন্দেহ না করতে পারে
     minify: false,
