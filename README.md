@@ -39,4 +39,4 @@ Intelligence: Groq Cloud API (LPU™ Inference)
 Icons: Lucide React
 Animations: CSS3 Keyframes & Framer Motion
 
-Live Link: https://codevigo.codzzup.com/
+Live Link: https://code-visualizer-application.vercel.app/
